@@ -6,8 +6,22 @@
 <title>Treino Futebol Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { font-family: 'Verdana', sans-serif; background: linear-gradient(to bottom, #0f172a, #1e293b); color: #f1f5f9; margin:0; padding:0; }
-header { background:#020617; text-align:center; padding:25px; font-size:28px; font-weight:bold; box-shadow:0 4px 6px rgba(0,0,0,0.3); }
+body {
+  font-family: 'Verdana', sans-serif;
+  background: url('https://i.imgur.com/0y8Ftya.png') no-repeat top right fixed;
+  background-size: 150px auto, cover;
+  background-color: #0f172a;
+  color: #f1f5f9;
+  margin:0; padding:0;
+}
+header {
+  background:#020617;
+  text-align:center;
+  padding:25px;
+  font-size:28px;
+  font-weight:bold;
+  box-shadow:0 4px 6px rgba(0,0,0,0.3);
+}
 .container { max-width:950px; margin:auto; padding:20px; }
 .card { background: rgba(30,41,59,0.85); margin:20px 0; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
 input, select, button { width:calc(100% - 22px); padding:10px; margin:6px 0; border-radius:6px; border:none; font-size:16px; }
@@ -31,6 +45,7 @@ th { background:#1e293b; }
 
 <div class="container">
 
+<!-- Perfil -->
 <div class="card">
 <h2>Cadastro do Jogador</h2>
 <input id="nome" placeholder="Nome do jogador">
@@ -46,6 +61,7 @@ th { background:#1e293b; }
 <div id="perfil"></div>
 </div>
 
+<!-- Registrar Treino -->
 <div class="card">
 <h2>Registrar Treino</h2>
 <input id="tipoTreino" placeholder="Tipo de treino">
@@ -54,6 +70,7 @@ th { background:#1e293b; }
 <button onclick="salvarTreino()">Salvar Treino</button>
 </div>
 
+<!-- Estatísticas -->
 <div class="card">
 <h2>Estatísticas do Jogador</h2>
 <div class="stat">Total de treinos: <span id="totalTreinos">0</span></div>
@@ -62,6 +79,7 @@ th { background:#1e293b; }
 <div class="medalhas" id="medalhas"></div>
 </div>
 
+<!-- Evolução semanal -->
 <div class="card">
 <h2>Evolução Semanal (Meta diária: 50 min)</h2>
 <canvas id="graficoTreino"></canvas>
@@ -72,6 +90,7 @@ th { background:#1e293b; }
 <button onclick="apagarSemana()">Apagar semana</button>
 </div>
 
+<!-- Histórico de treinos -->
 <div class="card">
 <h2>Histórico de Treinos</h2>
 <table>
@@ -119,8 +138,8 @@ function salvarTreino(){
   let hoje = new Date().getDay(), index=hoje===0?6:hoje-1;
   
   dadosSemana[index] = (dadosSemana[index]||0) + tempo;
-  totalTreinos = Number(totalTreinos) + 1;
-  totalDefesas = Number(totalDefesas) + defesas;
+  totalTreinos++;
+  totalDefesas += defesas;
   historico.push({dia:dias[index], tipo, tempo, defesas});
   
   localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
