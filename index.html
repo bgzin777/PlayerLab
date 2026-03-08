@@ -4,96 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Treino Futebol Pro</title>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-body {
-  font-family: 'Verdana', sans-serif;
-  background: linear-gradient(to bottom, #0f172a, #1e293b);
-  color: #f1f5f9;
-  margin:0;
-  padding:0;
-}
-header {
-  background:#020617;
-  text-align:center;
-  padding:25px;
-  font-size:28px;
-  font-weight:bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-.container {
-  max-width: 950px;
-  margin: auto;
-  padding: 20px;
-}
-.card {
-  background: rgba(30,41,59,0.85);
-  margin: 20px 0;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-input, select, button {
-  width: calc(100% - 22px);
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  border: none;
-  font-size: 16px;
-}
-button {
-  background: #22c55e;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
+body { font-family: 'Verdana', sans-serif; background: linear-gradient(to bottom, #0f172a, #1e293b); color: #f1f5f9; margin:0; padding:0; }
+header { background:#020617; text-align:center; padding:25px; font-size:28px; font-weight:bold; box-shadow:0 4px 6px rgba(0,0,0,0.3); }
+.container { max-width:950px; margin:auto; padding:20px; }
+.card { background: rgba(30,41,59,0.85); margin:20px 0; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
+input, select, button { width:calc(100% - 22px); padding:10px; margin:6px 0; border-radius:6px; border:none; font-size:16px; }
+button { background:#22c55e; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#16a34a; }
-.stat {
-  margin: 12px 0;
-  font-size: 20px;
-}
-#perfil {
-  background: #334155;
-  padding: 12px;
-  border-radius: 8px;
-  white-space: pre-line;
-  text-align:left;
-}
-.medalhas {
-  font-size: 32px;
-  margin-top: 12px;
-  opacity:0;
-  transform: translateY(-20px);
-  transition: all 0.8s ease;
-}
+.stat { margin:12px 0; font-size:20px; }
+#perfil { background:#334155; padding:12px; border-radius:8px; white-space: pre-line; text-align:left; }
+.medalhas { font-size:32px; margin-top:12px; opacity:0; transform: translateY(-20px); transition: all 0.8s ease; }
 .medalhas.show { opacity:1; transform:translateY(0); animation:bounce 0.8s;}
 @keyframes bounce {0%{transform:translateY(-20px);}50%{transform:translateY(-10px);}70%{transform:translateY(-15px);}100%{transform:translateY(0);}}
-#progressoDias .progresso-container {
-  background: #334155;
-  border-radius: 8px;
-  height:20px;
-  margin:5px 0;
-}
-#progressoDias .progresso-bar {
-  background: #22c55e;
-  height:100%;
-  width:0%;
-  border-radius:8px;
-  transition: width 0.8s ease;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-}
-th, td {
-  border: 1px solid #334155;
-  padding: 8px;
-  text-align:center;
-}
+#progressoDias .progresso-container { background: #334155; border-radius: 8px; height:20px; margin:5px 0; }
+#progressoDias .progresso-bar { background: #22c55e; height:100%; width:0%; border-radius:8px; transition: width 0.8s ease; }
+table { width:100%; border-collapse: collapse; margin-top:12px; }
+th, td { border:1px solid #334155; padding:8px; text-align:center; }
 th { background:#1e293b; }
 </style>
 </head>
@@ -160,10 +88,10 @@ th { background:#1e293b; }
 const metaDiaria = 50;
 const dias = ["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
 
-let dadosSemana = JSON.parse(localStorage.getItem("dadosSemana")) || [0,0,0,0,0,0,0];
-let totalTreinos = parseInt(localStorage.getItem("totalTreinos")||"0");
-let totalDefesas = parseInt(localStorage.getItem("pontuacao")||"0");
-let historico = JSON.parse(localStorage.getItem("historico")) || [];
+let dadosSemana = JSON.parse(localStorage.getItem("dadosSemana")||"[0,0,0,0,0,0,0]");
+let totalTreinos = Number(localStorage.getItem("totalTreinos")||0);
+let totalDefesas = Number(localStorage.getItem("pontuacao")||0);
+let historico = JSON.parse(localStorage.getItem("historico")||"[]");
 let grafico;
 
 function salvarPerfil(){
@@ -187,16 +115,19 @@ function salvarTreino(){
   let tempo = parseInt(document.getElementById("tempoTreino").value)||0;
   let defesas = parseInt(document.getElementById("resultadoTreino").value)||0;
   let tipo = document.getElementById("tipoTreino").value.trim();
-  if(tempo<=0||defesas<=0||tipo===""){alert("Preencha todos os campos corretamente!"); return;}
+  if(tempo<=0 || defesas<=0 || tipo===""){alert("Preencha todos os campos corretamente!"); return;}
   let hoje = new Date().getDay(), index=hoje===0?6:hoje-1;
-  dadosSemana[index]+=tempo;
-  totalTreinos++;
-  totalDefesas+=defesas;
+  
+  dadosSemana[index] = (dadosSemana[index]||0) + tempo;
+  totalTreinos = Number(totalTreinos) + 1;
+  totalDefesas = Number(totalDefesas) + defesas;
   historico.push({dia:dias[index], tipo, tempo, defesas});
+  
   localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
   localStorage.setItem("totalTreinos", totalTreinos);
   localStorage.setItem("pontuacao", totalDefesas);
   localStorage.setItem("historico", JSON.stringify(historico));
+  
   atualizarTela();
 }
 
@@ -238,8 +169,8 @@ function mostrarHistorico(){
 function apagarSemana(){
   dadosSemana=[0,0,0,0,0,0,0]; totalTreinos=0; totalDefesas=0; historico=[];
   localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
-  localStorage.setItem("totalTreinos", 0); 
-  localStorage.setItem("pontuacao",0);
+  localStorage.setItem("totalTreinos", totalTreinos);
+  localStorage.setItem("pontuacao", totalDefesas);
   localStorage.setItem("historico", JSON.stringify(historico));
   atualizarTela();
 }
@@ -265,7 +196,7 @@ function atualizarBarras(){
 }
 
 // Inicializar
-document.getElementById("perfil").innerText=localStorage.getItem("perfil")||"";
+document.getElementById("perfil").innerText = localStorage.getItem("perfil") || "";
 atualizarTela();
 </script>
 
