@@ -8,22 +8,29 @@
 <style>
 body {
   font-family: 'Verdana', sans-serif;
-  background: url('https://i.imgur.com/0y8Ftya.png') no-repeat top right fixed;
-  background-size: 150px auto, cover;
-  background-color: #0f172a;
+  margin:0;
+  padding:0;
+  background: url('https://images.unsplash.com/photo-1551958219-acbc608c6377') no-repeat center center fixed;
+  background-size: cover;
   color: #f1f5f9;
-  margin:0; padding:0;
 }
-header {
-  background:#020617;
+header { 
+  background: rgba(2,6,23,0.8);
   text-align:center;
   padding:25px;
   font-size:28px;
   font-weight:bold;
-  box-shadow:0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  color:white;
 }
 .container { max-width:950px; margin:auto; padding:20px; }
-.card { background: rgba(30,41,59,0.85); margin:20px 0; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.3); }
+.card { 
+  background: rgba(30,41,59,0.85); 
+  margin:20px 0; 
+  border-radius:12px; 
+  padding:25px; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
 input, select, button { width:calc(100% - 22px); padding:10px; margin:6px 0; border-radius:6px; border:none; font-size:16px; }
 button { background:#22c55e; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
 button:hover { background:#16a34a; }
@@ -45,7 +52,6 @@ th { background:#1e293b; }
 
 <div class="container">
 
-<!-- Perfil -->
 <div class="card">
 <h2>Cadastro do Jogador</h2>
 <input id="nome" placeholder="Nome do jogador">
@@ -61,7 +67,6 @@ th { background:#1e293b; }
 <div id="perfil"></div>
 </div>
 
-<!-- Registrar Treino -->
 <div class="card">
 <h2>Registrar Treino</h2>
 <input id="tipoTreino" placeholder="Tipo de treino">
@@ -70,7 +75,6 @@ th { background:#1e293b; }
 <button onclick="salvarTreino()">Salvar Treino</button>
 </div>
 
-<!-- Estatísticas -->
 <div class="card">
 <h2>Estatísticas do Jogador</h2>
 <div class="stat">Total de treinos: <span id="totalTreinos">0</span></div>
@@ -79,7 +83,6 @@ th { background:#1e293b; }
 <div class="medalhas" id="medalhas"></div>
 </div>
 
-<!-- Evolução semanal -->
 <div class="card">
 <h2>Evolução Semanal (Meta diária: 50 min)</h2>
 <canvas id="graficoTreino"></canvas>
@@ -90,7 +93,6 @@ th { background:#1e293b; }
 <button onclick="apagarSemana()">Apagar semana</button>
 </div>
 
-<!-- Histórico de treinos -->
 <div class="card">
 <h2>Histórico de Treinos</h2>
 <table>
@@ -106,7 +108,6 @@ th { background:#1e293b; }
 <script>
 const metaDiaria = 50;
 const dias = ["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
-
 let dadosSemana = JSON.parse(localStorage.getItem("dadosSemana")||"[0,0,0,0,0,0,0]");
 let totalTreinos = Number(localStorage.getItem("totalTreinos")||0);
 let totalDefesas = Number(localStorage.getItem("pontuacao")||0);
@@ -136,17 +137,14 @@ function salvarTreino(){
   let tipo = document.getElementById("tipoTreino").value.trim();
   if(tempo<=0 || defesas<=0 || tipo===""){alert("Preencha todos os campos corretamente!"); return;}
   let hoje = new Date().getDay(), index=hoje===0?6:hoje-1;
-  
   dadosSemana[index] = (dadosSemana[index]||0) + tempo;
   totalTreinos++;
   totalDefesas += defesas;
   historico.push({dia:dias[index], tipo, tempo, defesas});
-  
   localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
   localStorage.setItem("totalTreinos", totalTreinos);
   localStorage.setItem("pontuacao", totalDefesas);
   localStorage.setItem("historico", JSON.stringify(historico));
-  
   atualizarTela();
 }
 
