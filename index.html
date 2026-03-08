@@ -3,62 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Treino Futebol Pro</title>
+<title>Treino Futebol Pro - Login</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { font-family: 'Verdana', sans-serif; background: linear-gradient(to bottom, #0f172a, #1e293b); color:#f1f5f9; margin:0; padding:0;}
-header { background:#020617; text-align:center; padding:25px; font-size:28px; font-weight:bold; box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-.container { max-width:950px; margin:auto; padding:20px;}
-.card { background: rgba(30,41,59,0.85); margin:20px 0; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
-input, select, button { width:calc(100% - 22px); padding:10px; margin:6px 0; border-radius:6px; border:none; font-size:16px;}
-button { background:#22c55e; color:white; font-weight:bold; cursor:pointer; }
-button:hover { background:#16a34a; }
-.stat { margin:12px 0; font-size:20px; }
-#perfil { background:#334155; padding:12px; border-radius:8px; white-space: pre-line; text-align:left; }
-.medalhas { font-size:32px; margin-top:12px; opacity:0; transform: translateY(-20px); transition: all 0.8s ease; }
-.medalhas.show { opacity:1; transform:translateY(0); animation:bounce 0.8s;}
-@keyframes bounce {0%{transform:translateY(-20px);}50%{transform:translateY(-10px);}70%{transform:translateY(-15px);}100%{transform:translateY(0);}}
-#progressoDias .progresso-container { background:#334155; border-radius:8px; height:20px; margin:5px 0; }
-#progressoDias .progresso-bar { background:#22c55e; height:100%; width:0%; border-radius:8px; transition: width 0.8s ease; }
-table { width:100%; border-collapse: collapse; margin-top:12px; }
-th, td { border:1px solid #334155; padding:8px; text-align:center; }
-th { background:#1e293b; }
-.hidden { display:none; }
+body{font-family:Verdana,sans-serif;margin:0;padding:0;background:linear-gradient(to bottom,#0f172a,#1e293b);color:#f1f5f9;}
+header{background:#020617;text-align:center;padding:25px;font-size:28px;font-weight:bold;box-shadow:0 4px 6px rgba(0,0,0,0.3);}
+.container{max-width:950px;margin:auto;padding:20px;}
+.card{background: rgba(30,41,59,0.85); margin:20px 0; border-radius:12px; padding:25px; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+input,select,button{width:calc(100% - 22px);padding:10px;margin:6px 0;border-radius:6px;border:none;font-size:16px;}
+button{background:#22c55e;color:white;font-weight:bold;cursor:pointer;transition:0.3s;}
+button:hover{background:#16a34a;}
+.stat{margin:12px 0;font-size:20px;}
+#perfil{background:#334155;padding:12px;border-radius:8px;white-space:pre-line;text-align:left;}
+.medalhas{font-size:32px;margin-top:12px;opacity:0;transform:translateY(-20px);transition:all 0.8s ease;}
+.medalhas.show{opacity:1;transform:translateY(0);animation:bounce 0.8s;}
+@keyframes bounce{0%{transform:translateY(-20px);}50%{transform:translateY(-10px);}70%{transform:translateY(-15px);}100%{transform:translateY(0);}}
+#progressoDias .progresso-container{background:#334155;border-radius:8px;height:20px;margin:5px 0;}
+#progressoDias .progresso-bar{background:#22c55e;height:100%;width:0%;border-radius:8px;transition:width 0.8s ease;}
+table{width:100%;border-collapse:collapse;margin-top:12px;}
+th,td{border:1px solid #334155;padding:8px;text-align:center;}
+th{background:#1e293b;}
+#msg{margin:10px 0;font-weight:bold;}
 </style>
 </head>
 <body>
-
 <header>⚽ Treino Futebol Pro</header>
 <div class="container">
 
-<!-- Login / Registro -->
-<div id="loginCard" class="card">
+<div id="telaLogin" class="card">
 <h2>Login / Registro</h2>
-<select id="tipoUsuario">
-  <option value="jogador">Jogador</option>
-  <option value="clube">Clube</option>
-</select>
-<input id="email" type="email" placeholder="E-mail">
+<select id="tipoUsuario"><option>Jogador</option><option>Clube</option></select>
+<input id="email" placeholder="E-mail">
 <input id="senha" type="password" placeholder="Senha">
 <button onclick="registrar()">Registrar</button>
 <button onclick="logar()">Login</button>
-<p id="msg"></p>
+<div id="msg"></div>
 </div>
 
-<!-- Painel Jogador -->
-<div id="painelJogador" class="hidden">
-<button onclick="logout()">Sair</button>
-
+<div id="painel" style="display:none;">
 <div class="card">
 <h2>Cadastro do Jogador</h2>
 <input id="nome" placeholder="Nome do jogador">
 <input id="altura" type="number" placeholder="Altura (cm)">
 <input id="peso" type="number" placeholder="Peso (kg)">
 <select id="posicao">
-<option>Goleiro</option>
-<option>Zagueiro</option>
-<option>Meio Campo</option>
-<option>Atacante</option>
+<option>Goleiro</option><option>Zagueiro</option><option>Meio Campo</option><option>Atacante</option>
 </select>
 <button onclick="salvarPerfil()">Salvar Perfil</button>
 <div id="perfil"></div>
@@ -93,109 +82,74 @@ th { background:#1e293b; }
 <div class="card">
 <h2>Histórico de Treinos</h2>
 <table>
-<thead>
-<tr><th>Dia</th><th>Tipo de treino</th><th>Tempo (min)</th><th>Defesas</th></tr>
-</thead>
+<thead><tr><th>Dia</th><th>Tipo</th><th>Tempo (min)</th><th>Defesas</th></tr></thead>
 <tbody id="historico"></tbody>
 </table>
 </div>
-</div>
 
-<!-- Painel Clube -->
-<div id="painelClube" class="hidden">
-<button onclick="logout()">Sair</button>
-<div class="card">
-<h2>Painel do Clube</h2>
-<p>Em construção: futuramente listará jogadores e rankings.</p>
 </div>
-</div>
-
 </div>
 
 <script>
-// Dados globais
-let usuarios = JSON.parse(localStorage.getItem("usuarios")||"[]");
-let usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")||"null");
+let metaDiaria=50;
+let dias=["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
+let dadosSemana=[0,0,0,0,0,0,0], totalTreinos=0, totalDefesas=0, historico=[], grafico;
+let usuarioLogado=null;
 
-// Funções login/registro
+// --- Login/Registro ---
 function registrar(){
-  let tipo = document.getElementById("tipoUsuario").value;
-  let email = document.getElementById("email").value.trim();
-  let senha = document.getElementById("senha").value.trim();
-  if(!email || !senha){ document.getElementById("msg").innerText="Preencha todos os campos!"; return;}
-  if(usuarios.some(u=>u.email===email)){ document.getElementById("msg").innerText="E-mail já cadastrado!"; return;}
+  let tipo=document.getElementById("tipoUsuario").value;
+  let email=document.getElementById("email").value.trim();
+  let senha=document.getElementById("senha").value.trim();
+  let msg=document.getElementById("msg");
+  if(!email||!senha){msg.innerText="Preencha todos os campos!"; msg.style.color="red"; return;}
+  let usuarios=JSON.parse(localStorage.getItem("usuarios")||"[]");
+  if(usuarios.some(u=>u.email===email)){msg.innerText="E-mail já cadastrado!"; msg.style.color="red"; return;}
   usuarios.push({email, senha, tipo});
   localStorage.setItem("usuarios", JSON.stringify(usuarios));
-  document.getElementById("msg").innerText="Registrado com sucesso! Faça login.";
+  msg.innerText="Registrado com sucesso! Faça login."; msg.style.color="green";
+  document.getElementById("email").value=""; document.getElementById("senha").value="";
 }
-
 function logar(){
-  let email = document.getElementById("email").value.trim();
-  let senha = document.getElementById("senha").value.trim();
-  let usuario = usuarios.find(u=>u.email===email && u.senha===senha);
-  if(!usuario){ document.getElementById("msg").innerText="E-mail ou senha incorretos!"; return;}
+  let email=document.getElementById("email").value.trim();
+  let senha=document.getElementById("senha").value.trim();
+  let msg=document.getElementById("msg");
+  let usuarios=JSON.parse(localStorage.getItem("usuarios")||"[]");
+  let usuario=usuarios.find(u=>u.email===email && u.senha===senha);
+  if(!usuario){msg.innerText="E-mail ou senha incorretos!"; msg.style.color="red"; return;}
   localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
-  usuarioLogado = usuario;
-  mostrarPainel();
+  usuarioLogado=usuario;
+  document.getElementById("telaLogin").style.display="none";
+  document.getElementById("painel").style.display="block";
+  carregarDados();
 }
 
-function logout(){
-  localStorage.removeItem("usuarioLogado");
-  usuarioLogado=null;
-  document.getElementById("painelJogador").classList.add("hidden");
-  document.getElementById("painelClube").classList.add("hidden");
-  document.getElementById("loginCard").classList.remove("hidden");
-}
-
-// Mostrar painel correto
-function mostrarPainel(){
-  document.getElementById("loginCard").classList.add("hidden");
-  if(usuarioLogado.tipo==="jogador"){
-    document.getElementById("painelJogador").classList.remove("hidden");
-    initJogador();
-  } else {
-    document.getElementById("painelClube").classList.remove("hidden");
-  }
-}
-
-// ---------- PAINEL JOGADOR ----------
-const metaDiaria = 50;
-const dias = ["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
-let dadosSemana = JSON.parse(localStorage.getItem("dadosSemana")||"[0,0,0,0,0,0,0]");
-let totalTreinos = Number(localStorage.getItem("totalTreinos")||0);
-let totalDefesas = Number(localStorage.getItem("pontuacao")||0);
-let historico = JSON.parse(localStorage.getItem("historico")||"[]");
-let grafico;
-
-function initJogador(){
-  document.getElementById("perfil").innerText = localStorage.getItem("perfil") || "";
-  atualizarTela();
-}
-
+// --- Perfil / Treinos ---
 function salvarPerfil(){
   let nome=document.getElementById("nome").value;
   let altura=parseFloat(document.getElementById("altura").value);
   let peso=parseFloat(document.getElementById("peso").value);
   let posicao=document.getElementById("posicao").value;
-  if(!nome||!altura||!peso){ alert("Preencha todos os campos!"); return;}
-  let imc = peso / ((altura/100)**2);
+  if(!nome||!altura||!peso){alert("Preencha todos os campos!"); return;}
+  let imc = peso/((altura/100)**2);
   let classificacao="", dica="";
   if(imc<18.5){classificacao="Abaixo do peso"; dica="Alimente-se melhor";}
   else if(imc<25){classificacao="Peso ideal"; dica="Excelente condição física";}
   else if(imc<30){classificacao="Sobrepeso"; dica="Tente melhorar alimentação e manter treinos";}
   else{classificacao="Peso muito alto"; dica="Procure melhorar alimentação e aumentar atividade física";}
-  let texto = `Jogador: ${nome}\nPosição: ${posicao}\nAltura: ${altura} cm\nPeso: ${peso} kg\nIMC: ${imc.toFixed(1)}\nClassificação: ${classificacao}\nDica: ${dica}`;
-  document.getElementById("perfil").innerText = texto;
+  let texto=`Jogador: ${nome}\nPosição: ${posicao}\nAltura: ${altura} cm\nPeso: ${peso} kg\nIMC: ${imc.toFixed(1)}\nClassificação: ${classificacao}\nDica: ${dica}`;
+  document.getElementById("perfil").innerText=texto;
   localStorage.setItem("perfil", texto);
 }
 
+// --- Treinos ---
 function salvarTreino(){
   let tempo=parseInt(document.getElementById("tempoTreino").value)||0;
   let defesas=parseInt(document.getElementById("resultadoTreino").value)||0;
   let tipo=document.getElementById("tipoTreino").value.trim();
-  if(tempo<=0 || defesas<=0 || tipo===""){ alert("Preencha todos os campos corretamente!"); return;}
+  if(tempo<=0||defesas<=0||tipo===""){alert("Preencha todos os campos corretamente!"); return;}
   let hoje=new Date().getDay(), index=hoje===0?6:hoje-1;
-  dadosSemana[index] = (dadosSemana[index]||0)+tempo;
+  dadosSemana[index]=(dadosSemana[index]||0)+tempo;
   totalTreinos++; totalDefesas+=defesas;
   historico.push({dia:dias[index], tipo, tempo, defesas});
   localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
@@ -206,9 +160,13 @@ function salvarTreino(){
 }
 
 function atualizarTela(){
-  document.getElementById("totalTreinos").innerText = totalTreinos;
-  document.getElementById("pontuacao").innerText = totalDefesas;
-  definirNivel(); atualizarMedalhas(); criarGrafico(); atualizarBarras(); mostrarHistorico();
+  document.getElementById("totalTreinos").innerText=totalTreinos;
+  document.getElementById("pontuacao").innerText=totalDefesas;
+  definirNivel();
+  atualizarMedalhas();
+  criarGrafico();
+  atualizarBarras();
+  mostrarHistorico();
 }
 
 function definirNivel(){
@@ -216,23 +174,23 @@ function definirNivel(){
   if(totalDefesas>=50) nivel="Goleiro em evolução";
   if(totalDefesas>=120) nivel="Goleiro dedicado";
   if(totalDefesas>=250) nivel="Goleiro avançado";
-  document.getElementById("nivel").innerText = nivel;
+  document.getElementById("nivel").innerText=nivel;
 }
 
 function atualizarMedalhas(){
   let medalha="";
   if(dadosSemana.some(d=>d>=metaDiaria)) medalha+="🥉 ";
   if(dadosSemana.every(d=>d>=metaDiaria)) medalha+="🥈 ";
-  let medalhasEl=document.getElementById("medalhas");
-  medalhasEl.innerText=medalha;
-  if(medalha) medalhasEl.classList.add("show"); else medalhasEl.classList.remove("show");
+  let el=document.getElementById("medalhas");
+  el.innerText=medalha;
+  if(medalha) el.classList.add("show"); else el.classList.remove("show");
 }
 
 function mostrarHistorico(){
   let tbody=document.getElementById("historico"); tbody.innerHTML="";
   historico.forEach(t=>{
-    let corFundo=t.tempo>=metaDiaria?"#164e16":"#7f1d1d";
-    tbody.innerHTML+=`<tr style="background:${corFundo}"><td>${t.dia}</td><td>${t.tipo}</td><td>${t.tempo}</td><td>${t.defesas}</td></tr>`;
+    let cor=t.tempo>=metaDiaria?"#164e16":"#7f1d1d";
+    tbody.innerHTML+=`<tr style="background:${cor}"><td>${t.dia}</td><td>${t.tipo}</td><td>${t.tempo}</td><td>${t.defesas}</td></tr>`;
   });
 }
 
@@ -248,22 +206,31 @@ function apagarSemana(){
 function criarGrafico(){
   let ctx=document.getElementById("graficoTreino"); if(!ctx) return;
   if(grafico) grafico.destroy();
-  grafico=new Chart(ctx,{type:"bar", data:{labels:dias,datasets:[{label:"Tempo de treino (min)", data:dadosSemana, backgroundColor:dadosSemana.map(d=>d>=metaDiaria?"#22c55e":"#dc2626")}]}, options:{plugins:{legend:{labels:{color:"white"}}}, scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}});
+  grafico=new Chart(ctx,{type:"bar",data:{labels:dias,datasets:[{label:"Tempo de treino (min)",data:dadosSemana,backgroundColor:dadosSemana.map(d=>d>=metaDiaria?"#22c55e":"#dc2626")}]},options:{plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}});
 }
 
 function atualizarBarras(){
-  const container=document.getElementById("progressoDias"); container.innerHTML="";
+  let container=document.getElementById("progressoDias"); container.innerHTML="";
   dadosSemana.forEach((d,i)=>{
-    const pct=Math.min((d/metaDiaria)*100,100);
-    const div=document.createElement("div");
+    let pct=Math.min((d/metaDiaria)*100,100);
+    let div=document.createElement("div");
     div.innerHTML=`<strong>${dias[i]}:</strong><div class="progresso-container"><div class="progresso-bar" style="width:${pct}%"></div></div>`;
     container.appendChild(div);
   });
 }
 
-// Inicializar
-if(usuarioLogado) mostrarPainel();
+// --- Inicializar ---
+function carregarDados(){
+  let perfil=localStorage.getItem("perfil");
+  if(perfil) document.getElementById("perfil").innerText=perfil;
+  let dadosSalvos=JSON.parse(localStorage.getItem("dadosSemana")||"[0,0,0,0,0,0,0]");
+  let totalSalvo=Number(localStorage.getItem("totalTreinos")||0);
+  let defesasSalvo=Number(localStorage.getItem("pontuacao")||0);
+  let histSalvo=JSON.parse(localStorage.getItem("historico")||"[]");
+  dadosSemana=dadosSalvos; totalTreinos=totalSalvo; totalDefesas=defesasSalvo; historico=histSalvo;
+  atualizarTela();
+}
+carregarDados();
 </script>
-
 </body>
 </html>
