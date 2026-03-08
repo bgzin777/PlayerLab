@@ -106,10 +106,11 @@ th{ background:#1e293b; }
 const metaDiaria=50;
 const dias=["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
 
-let dadosSemana=JSON.parse(localStorage.getItem("dadosSemana"))||[0,0,0,0,0,0,0];
-let totalTreinos=parseInt(localStorage.getItem("totalTreinos"))||0;
-let totalDefesas=parseInt(localStorage.getItem("pontuacao"))||0;
-let historico=JSON.parse(localStorage.getItem("historico"))||[];
+// Ler localStorage e garantir números
+let dadosSemana=JSON.parse(localStorage.getItem("dadosSemana")) || [0,0,0,0,0,0,0];
+let totalTreinos=parseInt(localStorage.getItem("totalTreinos")) || 0;
+let totalDefesas=parseInt(localStorage.getItem("pontuacao")) || 0;
+let historico=JSON.parse(localStorage.getItem("historico")) || [];
 let grafico;
 
 // Salvar perfil
@@ -136,18 +137,32 @@ function salvarTreino(){
   let defesas=parseInt(document.getElementById("resultadoTreino").value)||0;
   let tipo=document.getElementById("tipoTreino").value.trim();
   if(tempo<=0 || defesas<=0 || tipo===""){alert("Preencha todos os campos corretamente!"); return;}
+  
   let hoje=new Date().getDay(), index=hoje===0?6:hoje-1;
+  
   dadosSemana[index]+=tempo;
   totalTreinos++;
   totalDefesas+=defesas;
   historico.push({dia:dias[index], tipo, tempo, defesas});
+  
+  // Salvar localStorage
   localStorage.setItem("dadosSemana",JSON.stringify(dadosSemana));
   localStorage.setItem("totalTreinos",totalTreinos);
   localStorage.setItem("pontuacao",totalDefesas);
   localStorage.setItem("historico",JSON.stringify(historico));
+  
+  atualizarTela();
+}
+
+// Atualizar tela
+function atualizarTela(){
   document.getElementById("totalTreinos").innerText=totalTreinos;
   document.getElementById("pontuacao").innerText=totalDefesas;
-  definirNivel(); atualizarMedalhas(); criarGrafico(); atualizarBarras();
+  definirNivel();
+  atualizarMedalhas();
+  criarGrafico();
+  atualizarBarras();
+  mostrarHistorico();
 }
 
 // Nível
@@ -166,6 +181,7 @@ function atualizarMedalhas(){
   if(dadosSemana.every(d=>d>=metaDiaria)) medalha+="🥈 ";
   let medalhasEl=document.getElementById("medalhas");
   medalhasEl.innerText=medalha;
+  if(medalha) medalhasEl.classList.add("show"); else medalhasEl.classList.remove("show");
 }
 
 // Histórico
@@ -183,11 +199,7 @@ function apagarSemana(){
   localStorage.setItem("dadosSemana",JSON.stringify(dadosSemana));
   localStorage.setItem("totalTreinos",0); localStorage.setItem("pontuacao",0);
   localStorage.setItem("historico",JSON.stringify(historico));
-  document.getElementById("totalTreinos").innerText=0;
-  document.getElementById("pontuacao").innerText=0;
-  document.getElementById("nivel").innerText="Iniciante";
-  document.getElementById("medalhas").innerText="";
-  mostrarHistorico(); criarGrafico(); atualizarBarras();
+  atualizarTela();
 }
 
 // Gráfico
@@ -211,7 +223,7 @@ function atualizarBarras(){
 // Inicialização
 document.getElementById("totalTreinos").innerText=totalTreinos;
 document.getElementById("pontuacao").innerText=totalDefesas;
-definirNivel(); mostrarHistorico(); atualizarMedalhas(); criarGrafico(); atualizarBarras();
+definirNivel(); atualizarMedalhas(); criarGrafico(); atualizarBarras(); mostrarHistorico();
 </script>
 
 </body>
