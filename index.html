@@ -232,10 +232,8 @@ function atualizarBarras(){
 }
 
 // Inicializar
-document.getElementById("totalTreinos").innerText=totalTreinos;
-document.getElementById("pontuacao").innerText=totalDefesas;
+atualizarTela();
 document.getElementById("perfil").innerText=localStorage.getItem("perfil")||"";
-definirNivel(); atualizarMedalhas(); criarGrafico(); atualizarBarras(); mostrarHistorico();
 </script>
 
 </body>
