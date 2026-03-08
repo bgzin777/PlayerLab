@@ -5,11 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sistema de Treino de Futebol</title>
 
-<!-- PWA Manifest -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#22c55e">
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -34,10 +29,8 @@ button:hover{ background:#16a34a; }
 .medalhas{ font-size:30px; margin-top:10px; opacity:0; transform: translateY(-20px); transition: all 0.8s ease; }
 .medalhas.show{ opacity:1; transform: translateY(0px); animation: bounce 0.8s; }
 @keyframes bounce { 0% {transform: translateY(-20px);} 50% {transform: translateY(-10px);} 70% {transform: translateY(-15px);} 100% {transform: translateY(0);} }
-#alertaMeta{ position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#22c55e; color:white; padding:20px 40px; border-radius:15px; font-size:20px; font-weight:bold; display:none; z-index:1000; box-shadow:0 0 20px #22c55e; animation:pop 1s ease forwards; }
-@keyframes pop{ 0%{transform: translateX(-50%) scale(0);} 70%{transform: translateX(-50%) scale(1.2);} 100%{transform: translateX(-50%) scale(1);} }
-.progresso-container{ background:#334155; border-radius:8px; margin:5px 0; height:20px; width:100%; }
-.progresso-bar{ background:#22c55e; height:100%; width:0%; border-radius:8px; transition: width 0.8s ease; }
+#progressoDias .progresso-container{ background:#334155; border-radius:8px; margin:5px 0; height:20px; width:100%; }
+#progressoDias .progresso-bar{ background:#22c55e; height:100%; width:0%; border-radius:8px; transition: width 0.8s ease; }
 table{ width:100%; border-collapse:collapse; margin-top:10px; }
 th,td{ border:1px solid #334155; padding:8px; text-align:center; }
 th{ background:#1e293b; }
@@ -109,77 +102,52 @@ th{ background:#1e293b; }
 
 </div>
 
-<div id="alertaMeta">🎉 Meta do dia alcançada! 🎉</div>
-
 <script>
-// --- CONFIGURAÇÃO ---
 const metaDiaria=50;
 const dias=["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
-const CALLR_API_KEY="SUA_API_KEY_AQUI";
-const CALLR_NUMERO="SEU_NUMERO_AQUI"; // formato internacional +55XXXXXXXXX
 
-// --- VARIÁVEIS ---
 let dadosSemana=JSON.parse(localStorage.getItem("dadosSemana"))||[0,0,0,0,0,0,0];
 let totalTreinos=parseInt(localStorage.getItem("totalTreinos"))||0;
 let totalDefesas=parseInt(localStorage.getItem("pontuacao"))||0;
-let recordeDefesas=parseInt(localStorage.getItem("recordeDefesas"))||0;
 let historico=JSON.parse(localStorage.getItem("historico"))||[];
 let grafico;
 
-// --- FUNÇÕES ---
-// Alerta visual
-function mostrarAlerta(){ const alerta=document.getElementById("alertaMeta"); alerta.style.display="block"; setTimeout(()=>{alerta.style.display="none"},2000); }
-
-// Enviar alerta Callr
-function enviarAlertaCLLR(mensagem){
-  fetch("https://api.callr.com/v1/messages", {
-    method:"POST",
-    headers:{ "Authorization":"Bearer "+CALLR_API_KEY,"Content-Type":"application/json"},
-    body:JSON.stringify({to:CALLR_NUMERO,text:mensagem})
-  })
-  .then(res=>res.json()).then(data=>console.log("Alerta enviado:",data)).catch(err=>console.log("Erro ao enviar alerta:",err));
-}
-
-// Perfil
+// Salvar perfil
 function salvarPerfil(){
   let nome=document.getElementById("nome").value;
   let altura=parseFloat(document.getElementById("altura").value);
   let peso=parseFloat(document.getElementById("peso").value);
   let posicao=document.getElementById("posicao").value;
-  if(!nome||!altura||!peso){alert("Preencha todos os campos!");return}
+  if(!nome||!altura||!peso){alert("Preencha todos os campos!"); return;}
   let imc=peso/((altura/100)**2);
-  let classificacao="",dica="";
-  if(imc<18.5){classificacao="Abaixo do peso";dica="Você precisa se alimentar melhor."}
-  else if(imc<25){classificacao="Peso ideal";dica="Excelente condição física."}
-  else if(imc<30){classificacao="Sobrepeso";dica="Tente melhorar alimentação e manter treinos."}
-  else{classificacao="Peso muito alto";dica="Procure melhorar alimentação e aumentar atividade física."}
+  let classificacao="", dica="";
+  if(imc<18.5){classificacao="Abaixo do peso"; dica="Você precisa se alimentar melhor."}
+  else if(imc<25){classificacao="Peso ideal"; dica="Excelente condição física."}
+  else if(imc<30){classificacao="Sobrepeso"; dica="Tente melhorar alimentação e manter treinos."}
+  else{classificacao="Peso muito alto"; dica="Procure melhorar alimentação e aumentar atividade física."}
   let texto=`Jogador: ${nome}\nPosição: ${posicao}\nAltura: ${altura} cm\nPeso: ${peso} kg\nIMC: ${imc.toFixed(1)}\nClassificação: ${classificacao}\nDica: ${dica}`;
   document.getElementById("perfil").innerText=texto;
   localStorage.setItem("perfil",texto);
 }
 
-// Treino
+// Salvar treino
 function salvarTreino(){
   let tempo=parseInt(document.getElementById("tempoTreino").value)||0;
   let defesas=parseInt(document.getElementById("resultadoTreino").value)||0;
   let tipo=document.getElementById("tipoTreino").value.trim();
-  if(tempo<=0 || defesas<=0 || tipo===""){alert("Preencha todos os campos corretamente!");return}
-  let hoje=new Date().getDay(),index=hoje===0?6:hoje-1;
+  if(tempo<=0 || defesas<=0 || tipo===""){alert("Preencha todos os campos corretamente!"); return;}
+  let hoje=new Date().getDay(), index=hoje===0?6:hoje-1;
   dadosSemana[index]+=tempo;
   totalTreinos++;
   totalDefesas+=defesas;
-  if(totalDefesas>recordeDefesas) recordeDefesas=totalDefesas;
-  historico.push({dia:dias[index],tipo,tempo,defesas});
+  historico.push({dia:dias[index], tipo, tempo, defesas});
   localStorage.setItem("dadosSemana",JSON.stringify(dadosSemana));
   localStorage.setItem("totalTreinos",totalTreinos);
   localStorage.setItem("pontuacao",totalDefesas);
-  localStorage.setItem("recordeDefesas",recordeDefesas);
   localStorage.setItem("historico",JSON.stringify(historico));
   document.getElementById("totalTreinos").innerText=totalTreinos;
   document.getElementById("pontuacao").innerText=totalDefesas;
-  alert(`Treino registrado: ${defesas} defesas (${tipo})`);
-  if(dadosSemana[index]>=metaDiaria){mostrarAlerta(); enviarAlertaCLLR(`Meta diária atingida: ${defesas} defesas realizadas! 🎯`);}
-  definirNivel(); atualizarMedalhas(true); criarGrafico(); mostrarHistorico(); atualizarBarras();
+  definirNivel(); atualizarMedalhas(); criarGrafico(); atualizarBarras();
 }
 
 // Nível
@@ -192,14 +160,12 @@ function definirNivel(){
 }
 
 // Medalhas
-function atualizarMedalhas(animar=false){
+function atualizarMedalhas(){
   let medalha="";
   if(dadosSemana.some(d=>d>=metaDiaria)) medalha+="🥉 ";
   if(dadosSemana.every(d=>d>=metaDiaria)) medalha+="🥈 ";
-  if(totalDefesas===recordeDefesas && recordeDefesas>0) medalha+="🥇 ";
   let medalhasEl=document.getElementById("medalhas");
   medalhasEl.innerText=medalha;
-  if(animar && medalha){ medalhasEl.classList.remove("show"); void medalhasEl.offsetWidth; medalhasEl.classList.add("show") }
 }
 
 // Histórico
@@ -213,10 +179,10 @@ function mostrarHistorico(){
 
 // Apagar semana
 function apagarSemana(){
-  dadosSemana=[0,0,0,0,0,0,0]; totalTreinos=0; totalDefesas=0; recordeDefesas=0; historico=[];
+  dadosSemana=[0,0,0,0,0,0,0]; totalTreinos=0; totalDefesas=0; historico=[];
   localStorage.setItem("dadosSemana",JSON.stringify(dadosSemana));
   localStorage.setItem("totalTreinos",0); localStorage.setItem("pontuacao",0);
-  localStorage.setItem("recordeDefesas",0); localStorage.setItem("historico",JSON.stringify(historico));
+  localStorage.setItem("historico",JSON.stringify(historico));
   document.getElementById("totalTreinos").innerText=0;
   document.getElementById("pontuacao").innerText=0;
   document.getElementById("nivel").innerText="Iniciante";
@@ -228,10 +194,10 @@ function apagarSemana(){
 function criarGrafico(){
   let ctx=document.getElementById("graficoTreino"); if(!ctx) return;
   if(grafico) grafico.destroy();
-  grafico=new Chart(ctx,{type:"bar",data:{labels:dias,datasets:[{label:"Tempo de treino (min)", data:dadosSemana,backgroundColor:dadosSemana.map(d=>d>=metaDiaria?"#22c55e":"#dc2626")}]},options:{plugins:{legend:{labels:{color:"white"}}},scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}})
+  grafico=new Chart(ctx,{type:"bar", data:{labels:dias, datasets:[{label:"Tempo de treino (min)", data:dadosSemana, backgroundColor:dadosSemana.map(d=>d>=metaDiaria?"#22c55e":"#dc2626")}]}, options:{plugins:{legend:{labels:{color:"white"}}}, scales:{x:{ticks:{color:"white"}}, y:{ticks:{color:"white"}}}});
 }
 
-// Barras de progresso
+// Barras de progresso diário
 function atualizarBarras(){
   const container=document.getElementById("progressoDias"); container.innerHTML="";
   dadosSemana.forEach((d,i)=>{
@@ -242,10 +208,11 @@ function atualizarBarras(){
   })
 }
 
-// Inicializar
+// Inicialização
 document.getElementById("totalTreinos").innerText=totalTreinos;
 document.getElementById("pontuacao").innerText=totalDefesas;
 definirNivel(); mostrarHistorico(); atualizarMedalhas(); criarGrafico(); atualizarBarras();
 </script>
+
 </body>
 </html>
