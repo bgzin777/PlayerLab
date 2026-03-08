@@ -3,159 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Treino de Futebol</title>
+<title>Treino Futebol Pro</title>
 
-<!-- PWA Manifest e Theme -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#22c55e">
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Service Worker -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('service-worker.js')
-    .then(reg => console.log('Service Worker registrado', reg))
-    .catch(err => console.log('Erro Service Worker', err));
-  });
-}
-</script>
-
 <style>
-body{
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
+body {
+  font-family: 'Verdana', sans-serif;
+  background: linear-gradient(to bottom, #0f172a, #1e293b);
+  color: #f1f5f9;
   margin:0;
   padding:0;
+}
+header {
+  background:#020617;
   text-align:center;
-  background:url("https://images.unsplash.com/photo-1551958219-acbc608c6377") no-repeat center center fixed;
-  background-size:cover;
-}
-header{
-  background:rgba(0,0,0,0.8);
-  padding:20px;
-}
-.container{
-  padding:20px;
-  max-width:900px;
-  margin:auto;
-}
-.card{
-  background:rgba(0,0,0,0.7);
-  padding:20px;
-  margin:20px 0;
-  border-radius:10px;
-}
-input,select,button{
-  padding:10px;
-  margin:5px;
-  border:none;
-  border-radius:5px;
-  width:calc(100% - 20px);
-}
-button{
-  background:#22c55e;
-  color:white;
+  padding:25px;
+  font-size:28px;
   font-weight:bold;
-  cursor:pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
-button:hover{
-  background:#16a34a;
+.container {
+  max-width: 950px;
+  margin: auto;
+  padding: 20px;
 }
-.stat{
-  font-size:20px;
-  margin:10px;
+.card {
+  background: rgba(30,41,59,0.85);
+  margin: 20px 0;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-#perfil{
-  white-space:pre-line;
+input, select, button {
+  width: calc(100% - 22px);
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
+button {
+  background: #22c55e;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover { background:#16a34a; }
+.stat {
+  margin: 12px 0;
+  font-size: 20px;
+}
+#perfil {
+  background: #334155;
+  padding: 12px;
+  border-radius: 8px;
+  white-space: pre-line;
   text-align:left;
-  background:#334155;
-  padding:10px;
-  border-radius:8px;
 }
-.medalhas{
-  font-size:30px;
-  margin-top:10px;
+.medalhas {
+  font-size: 32px;
+  margin-top: 12px;
   opacity:0;
   transform: translateY(-20px);
   transition: all 0.8s ease;
 }
-.medalhas.show{
-  opacity:1;
-  transform: translateY(0px);
-  animation: bounce 0.8s;
-}
-@keyframes bounce {
-  0% {transform: translateY(-20px);}
-  50% {transform: translateY(-10px);}
-  70% {transform: translateY(-15px);}
-  100% {transform: translateY(0);}
-}
-#alertaMeta{
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#22c55e;
-  color:white;
-  padding:20px 40px;
-  border-radius:15px;
-  font-size:20px;
-  font-weight:bold;
-  display:none;
-  z-index:1000;
-  box-shadow:0 0 20px #22c55e;
-  animation:pop 1s ease forwards;
-}
-@keyframes pop{
-  0%{transform: translateX(-50%) scale(0);}
-  70%{transform: translateX(-50%) scale(1.2);}
-  100%{transform: translateX(-50%) scale(1);}
-}
-.progresso-container{
-  background:#334155;
-  border-radius:8px;
-  margin:5px 0;
+.medalhas.show { opacity:1; transform:translateY(0); animation:bounce 0.8s;}
+@keyframes bounce {0%{transform:translateY(-20px);}50%{transform:translateY(-10px);}70%{transform:translateY(-15px);}100%{transform:translateY(0);}}
+#progressoDias .progresso-container {
+  background: #334155;
+  border-radius: 8px;
   height:20px;
-  width:100%;
+  margin:5px 0;
 }
-.progresso-bar{
-  background:#22c55e;
+#progressoDias .progresso-bar {
+  background: #22c55e;
   height:100%;
   width:0%;
   border-radius:8px;
   transition: width 0.8s ease;
 }
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
 }
-th,td{
-  border:1px solid #334155;
-  padding:8px;
+th, td {
+  border: 1px solid #334155;
+  padding: 8px;
   text-align:center;
 }
-th{
-  background:#1e293b;
-}
+th { background:#1e293b; }
 </style>
 </head>
 <body>
 
-<header>
-<h1>⚽ Sistema de Treino de Futebol</h1>
-</header>
+<header>⚽ Treino Futebol Pro</header>
 
 <div class="container">
 
-<!-- Cadastro do Jogador -->
 <div class="card">
 <h2>Cadastro do Jogador</h2>
-<input id="nome" placeholder="Nome">
+<input id="nome" placeholder="Nome do jogador">
 <input id="altura" type="number" placeholder="Altura (cm)">
 <input id="peso" type="number" placeholder="Peso (kg)">
 <select id="posicao">
@@ -164,30 +114,26 @@ th{
 <option>Meio Campo</option>
 <option>Atacante</option>
 </select>
-<br>
 <button onclick="salvarPerfil()">Salvar Perfil</button>
 <div id="perfil"></div>
 </div>
 
-<!-- Registrar Treino -->
 <div class="card">
 <h2>Registrar Treino</h2>
 <input id="tipoTreino" placeholder="Tipo de treino">
 <input id="tempoTreino" type="number" placeholder="Tempo do treino (min)">
-<input id="resultadoTreino" type="number" placeholder="Quantas defesas fez">
+<input id="resultadoTreino" type="number" placeholder="Defesas realizadas">
 <button onclick="salvarTreino()">Salvar Treino</button>
 </div>
 
-<!-- Estatísticas -->
 <div class="card">
-<h2>Estatísticas</h2>
+<h2>Estatísticas do Jogador</h2>
 <div class="stat">Total de treinos: <span id="totalTreinos">0</span></div>
 <div class="stat">Defesas totais: <span id="pontuacao">0</span></div>
-<div class="stat">Nível do jogador: <span id="nivel">Iniciante</span></div>
+<div class="stat">Nível: <span id="nivel">Iniciante</span></div>
 <div class="medalhas" id="medalhas"></div>
 </div>
 
-<!-- Gráfico semanal -->
 <div class="card">
 <h2>Evolução Semanal (Meta diária: 50 min)</h2>
 <canvas id="graficoTreino"></canvas>
@@ -195,21 +141,14 @@ th{
 <h3>Progresso diário</h3>
 <div id="progressoDias"></div>
 </div>
-<br>
-<button onclick="apagarSemana()">Apagar treinos da semana</button>
+<button onclick="apagarSemana()">Apagar semana</button>
 </div>
 
-<!-- Histórico detalhado -->
 <div class="card">
 <h2>Histórico de Treinos</h2>
 <table>
 <thead>
-<tr>
-<th>Dia</th>
-<th>Tipo de Treino</th>
-<th>Tempo (min)</th>
-<th>Defesas</th>
-</tr>
+<tr><th>Dia</th><th>Tipo de treino</th><th>Tempo (min)</th><th>Defesas</th></tr>
 </thead>
 <tbody id="historico"></tbody>
 </table>
@@ -217,187 +156,118 @@ th{
 
 </div>
 
-<div id="alertaMeta">🎉 Meta do dia alcançada! 🎉</div>
-
 <script>
-// Meta diária
 const metaDiaria = 50;
-const dias=["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
+const dias = ["Seg","Ter","Qua","Qui","Sex","Sab","Dom"];
+
 let dadosSemana = JSON.parse(localStorage.getItem("dadosSemana")) || [0,0,0,0,0,0,0];
-let totalTreinos = parseInt(localStorage.getItem("totalTreinos")) || 0;
-let totalDefesas = parseInt(localStorage.getItem("pontuacao")) || 0;
-let recordeDefesas = parseInt(localStorage.getItem("recordeDefesas")) || 0;
+let totalTreinos = parseInt(localStorage.getItem("totalTreinos")||"0");
+let totalDefesas = parseInt(localStorage.getItem("pontuacao")||"0");
 let historico = JSON.parse(localStorage.getItem("historico")) || [];
 let grafico;
 
-// Alerta meta
-function mostrarAlerta(){
-  const alerta=document.getElementById("alertaMeta")
-  alerta.style.display="block"
-  setTimeout(()=>{alerta.style.display="none"},2000)
-}
-
-// Notificação
-function notificar(titulo,texto){
-  if(Notification.permission==="granted"){
-    new Notification(titulo,{body:texto,icon:"icon-192.png"})
-  } else if(Notification.permission!=="denied"){
-    Notification.requestPermission().then(p=>{
-      if(p==="granted") new Notification(titulo,{body:texto,icon:"icon-192.png"})
-    })
-  }
-}
-
-// Salvar perfil
 function salvarPerfil(){
-  let nome=document.getElementById("nome").value
-  let altura=parseFloat(document.getElementById("altura").value)
-  let peso=parseFloat(document.getElementById("peso").value)
-  let posicao=document.getElementById("posicao").value
-  if(!nome || !altura || !peso){alert("Preencha todos os campos!");return}
-  let alturaM=altura/100
-  let imc=peso/(alturaM*alturaM)
-  let classificacao="", dica=""
-  if(imc<18.5){classificacao="Abaixo do peso"; dica="Você precisa se alimentar melhor."}
-  else if(imc<25){classificacao="Peso ideal"; dica="Excelente condição física."}
-  else if(imc<30){classificacao="Sobrepeso"; dica="Tente melhorar alimentação e manter treinos."}
-  else{classificacao="Peso muito alto"; dica="Procure melhorar alimentação e aumentar atividade física."}
-  let texto=`Jogador: ${nome}
-Posição: ${posicao}
-Altura: ${altura} cm
-Peso: ${peso} kg
-IMC: ${imc.toFixed(1)}
-Classificação: ${classificacao}
-Dica: ${dica}`
-  document.getElementById("perfil").innerText=texto
-  localStorage.setItem("perfil",texto)
+  let nome=document.getElementById("nome").value;
+  let altura=parseFloat(document.getElementById("altura").value);
+  let peso=parseFloat(document.getElementById("peso").value);
+  let posicao=document.getElementById("posicao").value;
+  if(!nome||!altura||!peso){alert("Preencha todos os campos!"); return;}
+  let imc = peso / ((altura/100)**2);
+  let classificacao="", dica="";
+  if(imc<18.5){classificacao="Abaixo do peso"; dica="Alimente-se melhor";}
+  else if(imc<25){classificacao="Peso ideal"; dica="Excelente condição física";}
+  else if(imc<30){classificacao="Sobrepeso"; dica="Tente melhorar alimentação e manter treinos";}
+  else{classificacao="Peso muito alto"; dica="Procure melhorar alimentação e aumentar atividade física";}
+  let texto = `Jogador: ${nome}\nPosição: ${posicao}\nAltura: ${altura} cm\nPeso: ${peso} kg\nIMC: ${imc.toFixed(1)}\nClassificação: ${classificacao}\nDica: ${dica}`;
+  document.getElementById("perfil").innerText = texto;
+  localStorage.setItem("perfil", texto);
 }
 
-// Salvar treino
 function salvarTreino(){
-  let tempo=parseInt(document.getElementById("tempoTreino").value) || 0
-  let defesas=parseInt(document.getElementById("resultadoTreino").value) || 0
-  let tipo=document.getElementById("tipoTreino").value.trim()
-  if(tempo<=0 || defesas<=0 || tipo===""){ alert("Preencha todos os campos corretamente!"); return }
-  let hoje=new Date().getDay()
-  let index=hoje===0?6:hoje-1
-  dadosSemana[index] += tempo
-  totalTreinos++
-  totalDefesas += defesas
-  if(totalDefesas>recordeDefesas) recordeDefesas=totalDefesas
-  historico.push({dia:dias[index], tipo, tempo, defesas})
-  localStorage.setItem("dadosSemana",JSON.stringify(dadosSemana))
-  localStorage.setItem("totalTreinos",totalTreinos)
-  localStorage.setItem("pontuacao",totalDefesas)
-  localStorage.setItem("recordeDefesas",recordeDefesas)
-  localStorage.setItem("historico",JSON.stringify(historico))
-  document.getElementById("totalTreinos").innerText=totalTreinos
-  document.getElementById("pontuacao").innerText=totalDefesas
-  alert(`Treino registrado: ${defesas} defesas (${tipo})`)
-  if(dadosSemana[index]>=metaDiaria){mostrarAlerta(); notificar("Meta diária atingida!","Parabéns, você bateu a meta de treino de hoje!")}
-  definirNivel()
-  atualizarMedalhas(true)
-  criarGrafico()
-  mostrarHistorico()
-  atualizarBarras()
+  let tempo = parseInt(document.getElementById("tempoTreino").value)||0;
+  let defesas = parseInt(document.getElementById("resultadoTreino").value)||0;
+  let tipo = document.getElementById("tipoTreino").value.trim();
+  if(tempo<=0||defesas<=0||tipo===""){alert("Preencha todos os campos corretamente!"); return;}
+  let hoje = new Date().getDay(), index=hoje===0?6:hoje-1;
+  dadosSemana[index]+=tempo;
+  totalTreinos++;
+  totalDefesas+=defesas;
+  historico.push({dia:dias[index], tipo, tempo, defesas});
+  localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
+  localStorage.setItem("totalTreinos", totalTreinos);
+  localStorage.setItem("pontuacao", totalDefesas);
+  localStorage.setItem("historico", JSON.stringify(historico));
+  atualizarTela();
 }
 
-// Nível por defesas
+function atualizarTela(){
+  document.getElementById("totalTreinos").innerText = totalTreinos;
+  document.getElementById("pontuacao").innerText = totalDefesas;
+  definirNivel();
+  atualizarMedalhas();
+  criarGrafico();
+  atualizarBarras();
+  mostrarHistorico();
+}
+
 function definirNivel(){
-  let nivel="Iniciante"
-  if(totalDefesas>=50) nivel="Goleiro em evolução"
-  if(totalDefesas>=120) nivel="Goleiro dedicado"
-  if(totalDefesas>=250) nivel="Goleiro avançado"
-  document.getElementById("nivel").innerText=nivel
+  let nivel="Iniciante";
+  if(totalDefesas>=50) nivel="Goleiro em evolução";
+  if(totalDefesas>=120) nivel="Goleiro dedicado";
+  if(totalDefesas>=250) nivel="Goleiro avançado";
+  document.getElementById("nivel").innerText = nivel;
 }
 
-// Medalhas
-function atualizarMedalhas(animar=false){
-  let medalha=""
-  if(dadosSemana.some(d=>d>=metaDiaria)) medalha+="🥉 "
-  if(dadosSemana.every(d=>d>=metaDiaria)) medalha+="🥈 "
-  if(totalDefesas===recordeDefesas && recordeDefesas>0) medalha+="🥇 "
-  let medalhasEl=document.getElementById("medalhas")
-  medalhasEl.innerText=medalha
-  if(animar && medalha){ medalhasEl.classList.remove("show"); void medalhasEl.offsetWidth; medalhasEl.classList.add("show") }
+function atualizarMedalhas(){
+  let medalha="";
+  if(dadosSemana.some(d=>d>=metaDiaria)) medalha+="🥉 ";
+  if(dadosSemana.every(d=>d>=metaDiaria)) medalha+="🥈 ";
+  let medalhasEl = document.getElementById("medalhas");
+  medalhasEl.innerText = medalha;
+  if(medalha) medalhasEl.classList.add("show"); else medalhasEl.classList.remove("show");
 }
 
-// Histórico
 function mostrarHistorico(){
-  let tbody=document.getElementById("historico")
-  tbody.innerHTML=""
+  let tbody = document.getElementById("historico"); tbody.innerHTML="";
   historico.forEach(t=>{
-    let corFundo = t.tempo>=metaDiaria ? "#164e16" : "#7f1d1d"
-    tbody.innerHTML += `<tr style="background:${corFundo}">
-      <td>${t.dia}</td>
-      <td>${t.tipo}</td>
-      <td>${t.tempo}</td>
-      <td>${t.defesas}</td>
-    </tr>`
-  })
+    let corFundo = t.tempo>=metaDiaria?"#164e16":"#7f1d1d";
+    tbody.innerHTML+=`<tr style="background:${corFundo}"><td>${t.dia}</td><td>${t.tipo}</td><td>${t.tempo}</td><td>${t.defesas}</td></tr>`;
+  });
 }
 
-// Apagar semana
 function apagarSemana(){
-  dadosSemana=[0,0,0,0,0,0,0]
-  totalTreinos=0
-  totalDefesas=0
-  recordeDefesas=0
-  historico=[]
-  localStorage.setItem("dadosSemana",JSON.stringify(dadosSemana))
-  localStorage.setItem("totalTreinos",0)
-  localStorage.setItem("pontuacao",0)
-  localStorage.setItem("recordeDefesas",0)
-  localStorage.setItem("historico",JSON.stringify(historico))
-  document.getElementById("totalTreinos").innerText=0
-  document.getElementById("pontuacao").innerText=0
-  document.getElementById("nivel").innerText="Iniciante"
-  document.getElementById("medalhas").innerText=""
-  mostrarHistorico()
-  criarGrafico()
-  atualizarBarras()
+  dadosSemana=[0,0,0,0,0,0,0]; totalTreinos=0; totalDefesas=0; historico=[];
+  localStorage.setItem("dadosSemana", JSON.stringify(dadosSemana));
+  localStorage.setItem("totalTreinos", 0); 
+  localStorage.setItem("pontuacao",0);
+  localStorage.setItem("historico", JSON.stringify(historico));
+  atualizarTela();
 }
 
-// Gráfico
 function criarGrafico(){
-  let ctx=document.getElementById("graficoTreino")
-  if(!ctx) return
-  if(grafico) grafico.destroy()
-  grafico=new Chart(ctx,{
+  let ctx=document.getElementById("graficoTreino"); if(!ctx) return;
+  if(grafico) grafico.destroy();
+  grafico = new Chart(ctx,{
     type:"bar",
-    data:{
-      labels:dias,
-      datasets:[{label:"Tempo de treino (min)", data:dadosSemana,
-      backgroundColor:dadosSemana.map(d => d>=metaDiaria ? "#22c55e":"#dc2626")}]
-    },
-    options:{plugins:{legend:{labels:{color:"white"}}}, scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}}}
-  })
+    data:{ labels:dias, datasets:[{label:"Tempo de treino (min)", data:dadosSemana, backgroundColor:dadosSemana.map(d=>d>=metaDiaria?"#22c55e":"#dc2626")}] },
+    options:{ plugins:{legend:{labels:{color:"white"}}}, scales:{x:{ticks:{color:"white"}},y:{ticks:{color:"white"}}} }
+  });
 }
 
-// Barras de progresso
 function atualizarBarras(){
-  const container=document.getElementById("progressoDias")
-  container.innerHTML=""
+  const container=document.getElementById("progressoDias"); container.innerHTML="";
   dadosSemana.forEach((d,i)=>{
-    const porcentagem=Math.min((d/metaDiaria)*100,100)
-    const div=document.createElement("div")
-    div.innerHTML=`<strong>${dias[i]}:</strong>
-      <div class="progresso-container">
-        <div class="progresso-bar" style="width:${porcentagem}%"></div>
-      </div>`
-    container.appendChild(div)
-  })
+    const pct = Math.min((d/metaDiaria)*100,100);
+    const div = document.createElement("div");
+    div.innerHTML=`<strong>${dias[i]}:</strong><div class="progresso-container"><div class="progresso-bar" style="width:${pct}%"></div></div>`;
+    container.appendChild(div);
+  });
 }
 
 // Inicializar
-document.getElementById("totalTreinos").innerText=totalTreinos
-document.getElementById("pontuacao").innerText=totalDefesas
-definirNivel()
-mostrarHistorico()
-atualizarMedalhas()
-criarGrafico()
-atualizarBarras()
-
+document.getElementById("perfil").innerText=localStorage.getItem("perfil")||"";
+atualizarTela();
 </script>
+
 </body>
 </html>
