@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisas - PlayerLab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0f0f13;color:white;display:flex;justify-content:center;padding:20px;}
+.container{background:linear-gradient(145deg,#4f46e5,#6366f1);padding:40px 30px;border-radius:25px;max-width:900px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,0.6);position:relative;}
+h1{font-size:2.5rem;margin-bottom:20px;text-align:center;}
+h1 span{color:#facc15;text-shadow:0 0 10px rgba(0,0,0,0.4);}
+.btn-voltar{position:absolute;top:20px;left:20px;padding:10px 15px;background:#facc15;color:#1a1a2e;font-weight:600;border:none;border-radius:10px;cursor:pointer;transition:all 0.3s;}
+.btn-voltar:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(0,0,0,0.4);}
+.search-history{margin-top:30px;display:flex;flex-direction:column;gap:15px;}
+.search-item{background:#1a1a2e;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.3);}
+.search-item h2{font-size:1.3rem;margin-bottom:5px;color:#facc15;}
+.search-item p{font-size:1rem;color:#d1d5db;}
+.clear-btn{margin-top:20px;padding:12px 20px;border:none;border-radius:12px;background:#e11d48;color:white;font-weight:600;cursor:pointer;transition:all 0.3s;}
+.clear-btn:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(0,0,0,0.4);}
+</style>
+</head>
+<body>
+
+<div class="container">
+<button class="btn-voltar" onclick="window.location.href='clube.html'">VOLTAR</button>
+<h1>Suas <span>Pesquisas</span></h1>
+
+<div class="search-history" id="searchHistory">
+<!-- Histórico aparecerá aqui -->
+</div>
+
+<button class="clear-btn" onclick="limparHistorico()">Limpar Histórico</button>
+
+<script>
+// Carregar histórico de pesquisas
+function carregarHistorico(){
+    const container = document.getElementById('searchHistory');
+    container.innerHTML = '';
+    let encontrou = false;
+    for(let i=0;i<localStorage.length;i++){
+        const key = localStorage.key(i);
+        if(key.startsWith('pesquisa_')){
+            encontrou = true;
+            const pesquisa = localStorage.getItem(key);
+            const div = document.createElement('div');
+            div.className='search-item';
+            div.innerHTML=`<h2>${pesquisa}</h2><p>Realizada em: ${new Date(parseInt(key.split('_')[1])).toLocaleString()}</p>`;
+            container.appendChild(div);
+        }
+    }
+    if(!encontrou){
+        container.innerHTML='<p style="text-align:center;color:#d1d5db;">Nenhuma pesquisa realizada ainda.</p>';
+    }
+}
+
+// Limpar histórico
+function limparHistorico(){
+    if(confirm("Deseja realmente limpar todo o histórico de pesquisas?")){
+        const keys = [];
+        for(let i=0;i<localStorage.length;i++){
+            const key = localStorage.key(i);
+            if(key.startsWith('pesquisa_')){
+                keys.push(key);
+            }
+        }
+        keys.forEach(k=>localStorage.removeItem(k));
+        carregarHistorico();
+    }
+}
+
+// Inicializa histórico
+carregarHistorico();
+</script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlayerLab - Painel ADM</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{
+    font-family:'Inter',sans-serif;
+    margin:0;
+    padding:0;
+    background:linear-gradient(180deg,#0f0f13,#1a1a24);
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.container{
+    background:#1f1f2e;
+    padding:30px;
+    border-radius:20px;
+    max-width:450px;
+    width:100%;
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+    text-align:center;
+}
+h1{
+    color:#facc15;
+    margin-bottom:20px;
+}
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:10px;
+    border:none;
+    background:#2a2a36;
+    color:#fff;
+    font-size:1rem;
+}
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#8b5cf6,#facc15);
+    color:white;
+    font-weight:600;
+    font-size:1rem;
+    cursor:pointer;
+    transition:0.2s;
+}
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 8px 20px rgba(0,0,0,0.5);
+}
+.msg{
+    color:#fbbf24;
+    margin-top:12px;
+    min-height:20px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Painel ADM</h1>
+<input type="text" id="admUser" placeholder="Usuário">
+<input type="password" id="admPass" placeholder="Senha">
+<button onclick="loginADM()">Entrar</button>
+<div class="msg" id="msg"></div>
+</div>
+
+<script>
+const ADM_CRED = {
+    usuario: "mlkbg10",
+    senha: "B306090r@"
+};
+
+function loginADM(){
+    const user = document.getElementById("admUser").value;
+    const pass = document.getElementById("admPass").value;
+    const msgDiv = document.getElementById("msg");
+
+    if(user === ADM_CRED.usuario && pass === ADM_CRED.senha){
+        localStorage.setItem("admLogado","true");
+        msgDiv.innerText = "Login bem-sucedido! Redirecionando...";
+        setTimeout(()=>{
+            window.location.href="painelADM_interface.html";
+        },800);
+    } else {
+        msgDiv.innerText = "Usuário ou senha incorretos!";
+    }
+}
+
+// Se o ADM já estiver logado, redireciona direto
+if(localStorage.getItem("admLogado") === "true"){
+    window.location.href="painelADM_interface.html";
+}
+</script>
+
+</body>
+</html>

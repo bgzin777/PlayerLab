@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogadores Bloqueados - PlayerLab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Reset */
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#1a1a2e;display:flex;justify-content:center;align-items:flex-start;padding:20px;position:relative;}
+
+/* Botão Voltar */
+#btnVoltar{
+    position:absolute;
+    top:20px;
+    left:20px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(135deg,#facc15,#4f46e5);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
+    transition:all 0.2s ease;
+}
+#btnVoltar:hover{
+    transform:scale(1.05);
+    box-shadow:0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Container */
+.container{
+    background:linear-gradient(145deg,#4f46e5,#facc15);
+    padding:40px 30px;
+    border-radius:25px;
+    max-width:900px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.6);
+    color:white;
+}
+
+/* Título */
+h1{font-size:2.5rem;margin-bottom:20px;}
+h1 span{color:white;text-shadow:0 0 10px rgba(0,0,0,0.4);}
+
+/* Lista de jogadores bloqueados */
+.player-list{margin-top:25px;}
+.player-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.2);}
+.player-item:last-child{border-bottom:none;}
+.player-item span{font-size:1rem;}
+.player-item button{padding:5px 10px;font-size:0.85rem;border-radius:8px;background:#e11d48;color:white;border:none;cursor:pointer;transition:all 0.2s;margin-left:5px;}
+.player-item button:hover{background:#be123c;}
+</style>
+</head>
+<body>
+
+<!-- Botão voltar -->
+<button id="btnVoltar" onclick="voltar()">VOLTAR</button>
+
+<div class="container">
+<h1>Jogadores <span>Bloqueados</span></h1>
+
+<div class="player-list" id="bloqueadosList">
+    <!-- Lista será populada via JS -->
+</div>
+</div>
+
+<script>
+// Função do botão voltar
+function voltar(){
+    window.location.href="clube.html";
+}
+
+// Atualizar lista de jogadores bloqueados
+function atualizarBloqueados(){
+    const container = document.getElementById("bloqueadosList");
+    container.innerHTML="";
+    let bloqueados = JSON.parse(localStorage.getItem("clube_bloqueados")||"[]");
+    if(bloqueados.length===0){
+        container.innerHTML="<p>Nenhum jogador bloqueado.</p>";
+        return;
+    }
+    bloqueados.forEach(nome=>{
+        const div = document.createElement("div");
+        div.className="player-item";
+        div.innerHTML=`<span>${nome}</span>
+        <button onclick="desbloquear('${nome}')">Desbloquear</button>`;
+        container.appendChild(div);
+    });
+}
+
+// Desbloquear jogador
+function desbloquear(nome){
+    let bloqueados = JSON.parse(localStorage.getItem("clube_bloqueados")||"[]");
+    bloqueados = bloqueados.filter(j=>j!==nome);
+    localStorage.setItem("clube_bloqueados",JSON.stringify(bloqueados));
+    atualizarBloqueados();
+}
+
+atualizarBloqueados();
+</script>
+
+</body>
+</html>

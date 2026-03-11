@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Editar Clube - PlayerLab</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f0f13;
+color:white;
+margin:0;
+padding:20px;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+background:#1f1f2e;
+padding:20px;
+border-radius:10px;
+}
+
+h1{
+color:#facc15;
+text-align:center;
+}
+
+input, textarea{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:6px;
+background:#2a2a36;
+color:white;
+}
+
+button{
+margin-top:15px;
+padding:10px;
+width:100%;
+border:none;
+border-radius:6px;
+background:#8b5cf6;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#7c3aed;
+}
+
+.preview{
+margin-top:20px;
+text-align:center;
+}
+
+.preview img{
+max-width:150px;
+border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Editar Clube</h1>
+
+<label>Nome do clube</label>
+<input id="nomeClube">
+
+<label>Descrição do clube</label>
+<textarea id="descClube"></textarea>
+
+<label>Foto do clube (URL da imagem)</label>
+<input id="fotoClube">
+
+<button onclick="salvarClube()">Salvar clube</button>
+
+<div class="preview" id="preview"></div>
+
+</div>
+
+<script>
+
+let usuario = localStorage.getItem("usuarioLogado")
+
+function salvarClube(){
+
+let nome = document.getElementById("nomeClube").value
+let desc = document.getElementById("descClube").value
+let foto = document.getElementById("fotoClube").value
+
+let clube = {
+nome:nome,
+descricao:desc,
+foto:foto
+}
+
+localStorage.setItem("clube_"+usuario,JSON.stringify(clube))
+
+mostrarPreview()
+
+alert("Clube salvo com sucesso")
+
+}
+
+function mostrarPreview(){
+
+let dados = localStorage.getItem("clube_"+usuario)
+
+if(!dados) return
+
+let clube = JSON.parse(dados)
+
+let div = document.getElementById("preview")
+
+div.innerHTML = `
+<h2>${clube.nome}</h2>
+<img src="${clube.foto}">
+<p>${clube.descricao}</p>
+`
+
+}
+
+mostrarPreview()
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>PlayerLab</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(180deg,#0f0f13,#1a1a24);
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:0;
+color:white;
+}
+
+.container{
+background:#1f1f2e;
+padding:40px;
+border-radius:15px;
+width:350px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+h1{
+color:#facc15;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:none;
+border-radius:8px;
+background:#2a2a36;
+color:white;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:linear-gradient(135deg,#8b5cf6,#facc15);
+color:white;
+font-weight:bold;
+cursor:pointer;
+font-size:15px;
+}
+
+.msg{
+margin-top:10px;
+color:#fbbf24;
+}
+
+.history{
+margin-top:20px;
+text-align:left;
+max-height:150px;
+overflow:auto;
+}
+
+.user{
+display:flex;
+justify-content:space-between;
+margin:5px 0;
+}
+
+.user button{
+background:red;
+border:none;
+padding:4px 8px;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>PlayerLab</h1>
+
+<input id="username" placeholder="Usuário">
+
+<input id="password" type="password" placeholder="Senha">
+
+<button onclick="login()">Entrar</button>
+
+<button onclick="register()">Registrar</button>
+
+<div class="msg" id="msg"></div>
+
+<div class="history" id="history"></div>
+
+</div>
+
+<script>
+
+const ADM_USER="mlkbg10"
+const ADM_PASS="B306090r@"
+
+function login(){
+
+let user=document.getElementById("username").value
+let pass=document.getElementById("password").value
+let msg=document.getElementById("msg")
+
+// ADM
+if(user===ADM_USER && pass===ADM_PASS){
+
+localStorage.setItem("admLogado","true")
+
+msg.innerText="Entrando no painel ADM..."
+
+setTimeout(()=>{
+window.location.href="painelADM_interface.html"
+},800)
+
+return
+}
+
+// BANIDO
+if(localStorage.getItem("ban_"+user)){
+msg.innerText="Você foi banido da plataforma"
+return
+}
+
+let saved=localStorage.getItem("user_"+user)
+
+if(saved===pass){
+
+localStorage.setItem("usuarioLogado",user)
+
+msg.innerText="Login realizado"
+
+setTimeout(()=>{
+
+window.location.href="playerlab.html"
+
+},800)
+
+}else{
+
+msg.innerText="Usuário ou senha incorretos"
+
+}
+
+}
+
+function register(){
+
+let user=document.getElementById("username").value
+let pass=document.getElementById("password").value
+
+if(!user || !pass){
+
+msg("Preencha usuário e senha")
+return
+
+}
+
+if(localStorage.getItem("user_"+user)){
+
+msg("Usuário já existe")
+return
+
+}
+
+localStorage.setItem("user_"+user,pass)
+
+msg("Conta criada com sucesso")
+
+atualizarHistorico()
+
+}
+
+function msg(t){
+
+document.getElementById("msg").innerText=t
+
+}
+
+function atualizarHistorico(){
+
+let div=document.getElementById("history")
+
+div.innerHTML="<h3>Usuários:</h3>"
+
+for(let i=0;i<localStorage.length;i++){
+
+let key=localStorage.key(i)
+
+if(key.startsWith("user_")){
+
+let user=key.replace("user_","")
+
+let el=document.createElement("div")
+
+el.className="user"
+
+el.innerHTML=`
+<span>${user}</span>
+<button onclick="excluirConta('${user}')">Excluir</button>
+`
+
+div.appendChild(el)
+
+}
+
+}
+
+}
+
+function excluirConta(user){
+
+if(!confirm("Excluir a conta "+user+" permanentemente?")) return
+
+localStorage.removeItem("user_"+user)
+localStorage.removeItem("clube_"+user)
+localStorage.removeItem("player_"+user)
+localStorage.removeItem("perfil_"+user)
+localStorage.removeItem("ban_"+user)
+localStorage.removeItem("favoritos_"+user)
+localStorage.removeItem("talentos_"+user)
+
+alert("Conta excluída permanentemente")
+
+atualizarHistorico()
+
+}
+
+atualizarHistorico()
+
+</script>
+
+</body>
+</html>

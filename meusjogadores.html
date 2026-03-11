@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meus Jogadores - PlayerLab</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#1a1a2e;display:flex;justify-content:center;align-items:flex-start;padding:20px;}
+.container{background:linear-gradient(145deg,#4f46e5,#facc15);padding:40px 30px;border-radius:25px;max-width:900px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.6);color:white;position:relative;}
+h1{font-size:2.5rem;margin-bottom:20px;}
+h1 span{color:white;text-shadow:0 0 10px rgba(0,0,0,0.4);}
+#btnVoltar{position:absolute;top:20px;left:20px;padding:10px 15px;background:#10b981;color:white;border:none;border-radius:10px;cursor:pointer;font-weight:600;}
+#btnVoltar:hover{background:#059669;}
+.player-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.2);}
+.player-item span{font-size:1rem;}
+.player-item button{padding:5px 10px;border-radius:8px;border:none;background:#3b82f6;color:white;cursor:pointer;transition:all 0.2s;}
+.player-item button:hover{background:#2563eb;}
+</style>
+</head>
+<body>
+<div class="container">
+<button id="btnVoltar" onclick="window.location.href='clube.html'">VOLTAR</button>
+<h1>Meus Jogadores <span>PlayerLab</span></h1>
+<div id="listaJogadores"></div>
+</div>
+
+<script>
+function getJogadoresLogados(){
+    let jogadores=[];
+    for(let i=0;i<localStorage.length;i++){
+        let key=localStorage.key(i);
+        if(key.startsWith("user_")){
+            let nome=key.replace("user_","");
+            jogadores.push({nome: nome, posicao:"Atacante"});
+        }
+    }
+    return jogadores;
+}
+
+function atualizarLista(){
+    const container=document.getElementById("listaJogadores");
+    const jogadores=getJogadoresLogados();
+    container.innerHTML="";
+    if(jogadores.length===0){
+        container.innerHTML="<p>Nenhum jogador logado.</p>";
+        return;
+    }
+    jogadores.forEach(j=>{
+        const div=document.createElement("div");
+        div.className="player-item";
+        div.innerHTML=`<span>${j.nome} - ${j.posicao}</span>
+        <button onclick="enviarProposta('${j.nome}')">Enviar Proposta</button>`;
+        container.appendChild(div);
+    });
+}
+
+function enviarProposta(nome){
+    alert("Proposta enviada para "+nome);
+}
+
+atualizarLista();
+</script>
+</body>
+</html>

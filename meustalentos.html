@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Meus Talentos</title>
+</head>
+
+<body style="background:#111;color:white;font-family:Arial">
+
+<h2>Meus Talentos</h2>
+
+<div id="lista"></div>
+
+<script>
+
+let talentos=JSON.parse(localStorage.getItem("talentos")||"[]")
+
+let lista=document.getElementById("lista")
+
+if(talentos.length==0){
+
+lista.innerHTML="Nenhum talento salvo"
+
+}
+
+talentos.forEach(t=>{
+
+let div=document.createElement("div")
+
+div.innerHTML=t
+
+lista.appendChild(div)
+
+})
+
+</script>
+
+</body>
+</html>
