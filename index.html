@@ -1,247 +1,881 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>PlayerLab</title>
-
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PlayerLab – Conectando Talentos e Oportunidades</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet"/>
 <style>
-
-body{
-font-family:Arial;
-background:linear-gradient(180deg,#0f0f13,#1a1a24);
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-margin:0;
-color:white;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#2979FF;--blue-l:#5C9DFF;--blue-dark:#1a56cc;
+  --dark:#0a0d12;--dark2:#0d1117;--dark3:#111520;
+  --card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.07);
+  --text:#f0f4f8;--muted:rgba(240,244,248,0.5);
+  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;
 }
+html{scroll-behavior:smooth;}
+body{font-family:'Barlow',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden;margin:0;}
+button{cursor:pointer;font-family:inherit;}
 
-.container{
-background:#1f1f2e;
-padding:40px;
-border-radius:15px;
-width:350px;
-text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,0.5);
-}
+.screen{display:none;}
+.screen.active{display:block;}
+#s-landing.active{display:block;}
+#s-auth.active{display:flex;min-height:100vh;align-items:center;justify-content:center;background:var(--dark);padding:1rem;}
+#s-pub.active,#s-app.active{display:block;min-height:100vh;background:var(--dark);}
 
-h1{
-color:#facc15;
-margin-bottom:20px;
-}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.45) 0%,rgba(5,10,20,0.75) 60%,var(--dark) 100%),
+  url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1600&q=80') center/cover no-repeat;}
+.hero-inner{position:relative;z-index:2;text-align:center;padding:2rem 1.5rem;animation:fadeUp .9s ease both;max-width:700px;margin:0 auto;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.badge-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(41,121,255,0.15);border:1px solid rgba(41,121,255,0.35);
+  border-radius:100px;padding:5px 18px 5px 12px;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--blue-l);margin-bottom:1.8rem;}
+.badge-pill svg{width:13px;height:13px;fill:var(--blue-l);}
+.hero-logo{font-family:'Barlow Condensed',sans-serif;font-size:clamp(3.5rem,11vw,7rem);font-weight:700;
+  letter-spacing:.06em;line-height:1;color:#fff;margin-bottom:1.2rem;text-transform:uppercase;}
+.hero-logo span{color:var(--blue);}
+.hero-sub{font-size:clamp(.9rem,2.5vw,1rem);font-weight:400;color:rgba(240,244,248,0.72);
+  max-width:460px;margin:0 auto 2.6rem;line-height:1.65;}
+.hero-btns{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;}
+.btn-hero-primary{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;border:none;
+  border-radius:7px;padding:.78rem 1.8rem;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;transition:background .18s,transform .15s;}
+.btn-hero-primary:hover{background:var(--blue-l);transform:translateY(-2px);}
+.btn-hero-secondary{display:inline-flex;align-items:center;background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.18);color:var(--text);border-radius:7px;padding:.78rem 1.8rem;
+  font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;transition:background .18s,transform .15s;}
+.btn-hero-secondary:hover{background:rgba(255,255,255,0.14);transform:translateY(-2px);}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;}
+.scroll-mouse{width:24px;height:38px;border:2px solid rgba(255,255,255,0.35);border-radius:12px;position:relative;}
+.scroll-mouse::before{content:'';width:4px;height:8px;background:rgba(255,255,255,0.6);border-radius:2px;
+  position:absolute;top:5px;left:50%;transform:translateX(-50%);animation:scrollDot 1.6s ease-in-out infinite;}
+@keyframes scrollDot{0%,100%{opacity:1;top:5px;}50%{opacity:0;top:14px;}}
 
-input{
-width:100%;
-padding:12px;
-margin:8px 0;
-border:none;
-border-radius:8px;
-background:#2a2a36;
-color:white;
-}
+.stats-wrap{background:var(--dark);padding:4rem 1.5rem 0;}
+.stats-inner{display:flex;flex-direction:column;align-items:center;gap:1.2rem;max-width:600px;margin:0 auto;}
+.stat-block{width:100%;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;padding:2.2rem 2rem;text-align:center;transition:border-color .2s;}
+.stat-block:hover{border-color:rgba(41,121,255,0.25);}
+.stat-number{font-family:'Barlow Condensed',sans-serif;font-size:clamp(3rem,10vw,4rem);font-weight:700;
+  color:var(--blue);letter-spacing:.02em;line-height:1;margin-bottom:.5rem;}
+.stat-label{font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(240,244,248,0.55);}
 
-button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:8px;
-background:linear-gradient(135deg,#8b5cf6,#facc15);
-color:white;
-font-weight:bold;
-cursor:pointer;
-font-size:15px;
-}
+.como-section{background:var(--dark);padding:4rem 1.5rem 2rem;max-width:600px;margin:0 auto;text-align:center;}
+.como-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.6rem,5vw,2.2rem);font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:#fff;margin-bottom:.8rem;}
+.como-sub{font-size:.92rem;color:var(--muted);line-height:1.6;margin-bottom:2.5rem;}
+.como-cards{display:flex;flex-direction:column;gap:1.2rem;padding:0 0 2rem;}
+.como-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;
+  padding:1.8rem 1.5rem;text-align:left;transition:border-color .2s;}
+.como-card:hover{border-color:rgba(41,121,255,0.2);}
+.como-icon{width:60px;height:60px;border-radius:14px;background:rgba(41,121,255,0.15);
+  border:1px solid rgba(41,121,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;}
+.como-icon svg{width:28px;height:28px;fill:var(--blue-l);}
+.como-card-title{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:#fff;margin-bottom:.5rem;}
+.como-card-desc{font-size:.88rem;color:var(--muted);line-height:1.6;}
 
-.msg{
-margin-top:10px;
-color:#fbbf24;
-}
+.cta-section{padding:2rem 1.5rem 5rem;max-width:600px;margin:0 auto;}
+.cta-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:3rem 2rem;text-align:center;}
+.cta-icon-wrap{width:72px;height:72px;border-radius:50%;background:rgba(41,121,255,0.15);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;}
+.cta-icon-wrap svg{width:34px;height:34px;fill:var(--blue-l);}
+.cta-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.4rem,5vw,1.9rem);font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:#fff;margin-bottom:.7rem;}
+.cta-desc{font-size:.9rem;color:var(--muted);line-height:1.6;margin-bottom:1.8rem;max-width:360px;margin-left:auto;margin-right:auto;}
+.btn-cta{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--blue);
+  color:#fff;border:none;border-radius:8px;padding:1rem 2rem;font-family:'Barlow Condensed',sans-serif;
+  font-size:1rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:background .18s;}
+.btn-cta:hover{background:var(--blue-l);}
+.btn-cta svg{width:18px;height:18px;fill:#fff;}
 
-.history{
-margin-top:20px;
-text-align:left;
-max-height:150px;
-overflow:auto;
-}
+footer{background:var(--dark);border-top:1px solid var(--border);padding:2.5rem 1.5rem;text-align:center;}
+.footer-logo{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.6rem;
+  letter-spacing:.08em;text-transform:uppercase;color:#fff;margin-bottom:.5rem;}
+.footer-logo span{color:var(--blue);}
+.footer-copy{font-size:.75rem;color:var(--muted);}
 
-.user{
-display:flex;
-justify-content:space-between;
-margin:5px 0;
-}
+.auth-box{background:#0d1117;border:1px solid var(--border);border-radius:18px;width:100%;
+  max-width:400px;padding:2.4rem 2rem;animation:fadeUp .25s ease both;}
+.auth-logo{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:2rem;
+  letter-spacing:.08em;text-align:center;margin-bottom:.25rem;}
+.auth-logo span{color:var(--blue);}
+.auth-tagline{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:1.8rem;}
+.tab-tog{display:flex;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:8px;padding:4px;margin-bottom:1.5rem;}
+.t-btn{flex:1;padding:.5rem;border:none;border-radius:5px;background:transparent;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;transition:all .18s;}
+.t-btn.on{background:rgba(41,121,255,.15);color:var(--text);}
+.type-tog{display:flex;gap:.5rem;margin-bottom:1.1rem;}
+.ty-btn{flex:1;padding:.5rem;border:1px solid var(--border);border-radius:7px;background:transparent;
+  color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;transition:all .18s;}
+.ty-btn.on{border-color:var(--blue);color:var(--blue-l);background:rgba(41,121,255,.08);}
+.fg{margin-bottom:1rem;}
+.fl{display:block;font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.fi-wrap{position:relative;}
+.fi-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:rgba(240,244,248,0.3);pointer-events:none;}
+.fi{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;
+  padding:.65rem .9rem .65rem 2.4rem;font-family:'Barlow',sans-serif;font-size:.9rem;color:var(--text);
+  outline:none;transition:border-color .18s;}
+.fi::placeholder{color:rgba(240,244,248,.2);}
+.fi:focus{border-color:var(--blue);background:rgba(41,121,255,.04);}
+.fi.noi{padding-left:.9rem;}
+.btn-auth{width:100%;background:var(--blue);color:#fff;border:none;border-radius:7px;padding:.85rem;
+  font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;transition:background .18s;margin-top:.3rem;}
+.btn-auth:hover{background:var(--blue-l);}
+.auth-err{margin-top:.6rem;font-size:.78rem;color:var(--red);text-align:center;min-height:1rem;}
+.auth-back{display:block;text-align:center;margin-top:1rem;font-size:.78rem;color:var(--muted);
+  background:none;border:none;cursor:pointer;transition:color .15s;}
+.auth-back:hover{color:var(--text);}
 
-.user button{
-background:red;
-border:none;
-padding:4px 8px;
-color:white;
-border-radius:5px;
-cursor:pointer;
-}
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 1.5rem;background:rgba(10,13,18,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.6rem;letter-spacing:.06em;text-transform:uppercase;}
+.nav-logo span{color:var(--blue);}
+.nav-r{display:flex;align-items:center;gap:.8rem;}
+.nav-user{font-size:.8rem;color:var(--muted);max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-nav{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:6px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  transition:all .18s;padding:.42rem 1rem;font-size:.8rem;cursor:pointer;}
+.btn-nav-ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:var(--text);}
+.btn-nav-ghost:hover{background:rgba(255,255,255,.13);}
+.btn-nav-blue{background:var(--blue);color:#fff;}
+.btn-nav-blue:hover{background:var(--blue-l);}
 
+.app-wrap{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 56px);}
+@media(max-width:768px){.app-wrap{grid-template-columns:1fr;}.sidebar{display:none;}}
+.sidebar{background:#0d1117;border-right:1px solid var(--border);padding:1.5rem 0;
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:.72rem 1.4rem;font-size:.88rem;font-weight:500;
+  color:var(--muted);transition:all .15s;cursor:pointer;border-left:3px solid transparent;}
+.sb-item:hover{color:var(--text);background:rgba(255,255,255,.04);}
+.sb-item.on{color:var(--blue-l);border-left-color:var(--blue);background:rgba(41,121,255,.07);}
+.sb-item svg{width:17px;height:17px;fill:currentColor;flex-shrink:0;}
+.sb-foot{padding:1rem 1.4rem;border-top:1px solid var(--border);margin-top:1rem;}
+.sb-user-row{display:flex;align-items:center;gap:10px;}
+.sb-av{width:34px;height:34px;border-radius:8px;background:rgba(41,121,255,.18);border:1px solid rgba(41,121,255,.25);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-av svg{width:16px;height:16px;fill:var(--blue-l);}
+.sb-uname{font-size:.8rem;font-weight:600;color:var(--text);}
+.sb-urole{font-size:.67rem;color:var(--muted);}
+
+.content{overflow-y:auto;}
+.pg{display:none;min-height:calc(100vh - 56px);position:relative;}
+.pg.on{display:block;}
+.field-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(10,13,18,.74),rgba(10,13,18,.74)),
+  url('https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1400&q=70') center/cover no-repeat;}
+.pg-inner{position:relative;z-index:1;padding:2rem 2rem 3rem;}
+.pg-title{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;margin-bottom:.25rem;}
+.pg-title span{color:var(--blue);}
+.pg-desc{font-size:.84rem;color:var(--muted);margin-bottom:2rem;}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.1rem;}
+.card{background:rgba(255,255,255,.04);backdrop-filter:blur(8px);border:1px solid var(--border);
+  border-radius:12px;padding:1.3rem;transition:transform .2s,border-color .2s;}
+.card:hover{transform:translateY(-3px);border-color:rgba(41,121,255,.3);}
+.ch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.9rem;}
+.cav{width:44px;height:44px;border-radius:10px;background:rgba(41,121,255,.12);border:1px solid rgba(41,121,255,.18);
+  display:flex;align-items:center;justify-content:center;}
+.cav svg{width:21px;height:21px;fill:var(--blue-l);}
+.cbadge{font-size:.63rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:4px;}
+.cbadge.green{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.18);}
+.cbadge.blue{background:rgba(41,121,255,.12);color:var(--blue-l);border:1px solid rgba(41,121,255,.18);}
+.cn{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:.2rem;}
+.cm{font-size:.78rem;color:var(--muted);line-height:1.55;}
+.ctags{display:flex;flex-wrap:wrap;gap:5px;margin:.7rem 0;}
+.ctag{font-size:.67rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:4px;padding:2px 8px;color:var(--muted);}
+.cf{display:flex;gap:.5rem;margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--border);}
+
+.form-card{background:rgba(255,255,255,.04);backdrop-filter:blur(8px);border:1px solid var(--border);
+  border-radius:14px;padding:1.8rem;max-width:540px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:480px){.form-row{grid-template-columns:1fr;}}
+.fgp{margin-bottom:1.1rem;}
+.flp{display:block;font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.fip,.fsp,.ftp{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:7px;
+  padding:.65rem .9rem;font-family:'Barlow',sans-serif;font-size:.9rem;color:var(--text);outline:none;transition:border-color .18s;}
+.fip::placeholder,.ftp::placeholder{color:rgba(240,244,248,.2);}
+.fip:focus,.fsp:focus,.ftp:focus{border-color:var(--blue);background:rgba(41,121,255,.04);}
+.fsp option{background:#0d1117;}
+.ftp{resize:vertical;min-height:88px;}
+
+.stats-r{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin-bottom:2rem;}
+.sc{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;}
+.sv{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:700;letter-spacing:.02em;}
+.sv b{color:var(--blue);}
+.sl{font-size:.67rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
+
+.ins-list{display:flex;flex-direction:column;gap:.7rem;}
+.ins-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);border-radius:9px;padding:.9rem 1.1rem;gap:.5rem;flex-wrap:wrap;}
+.ins-st{font-size:.67rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:4px;}
+.ins-st.pending{background:rgba(245,158,11,.12);color:var(--yellow);}
+.ins-st.approved{background:rgba(34,197,94,.12);color:var(--green);}
+.ins-st.rejected{background:rgba(239,68,68,.12);color:var(--red);}
+.ins-acts{display:flex;gap:.4rem;align-items:center;}
+
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:7px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  transition:all .18s;cursor:pointer;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:var(--blue-l);}
+.btn-ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);color:var(--text);}
+.btn-ghost:hover{background:rgba(255,255,255,.13);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#16a34a;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-danger:hover{background:#dc2626;}
+.btn-md{padding:.65rem 1.3rem;font-size:.85rem;}
+.btn-sm{padding:.38rem .9rem;font-size:.78rem;}
+.btn-xs{padding:.26rem .65rem;font-size:.72rem;}
+.btn-full{width:100%;justify-content:center;padding:.82rem;}
+
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center;gap:.6rem;}
+.eico{width:58px;height:58px;fill:rgba(240,244,248,.2);display:block;margin:0 auto;}
+.etit{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:.04em;color:rgba(240,244,248,.5);}
+.esub{font-size:.82rem;color:var(--muted);}
+
+.dh{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:1.6rem;margin-bottom:1.5rem;}
+.dh-club{font-size:.78rem;color:var(--blue-l);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;}
+.dh-title{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:.04em;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:.78rem;color:var(--muted);
+  background:none;border:none;padding:0;margin-bottom:1.4rem;cursor:pointer;transition:color .15s;}
+.back-btn:hover{color:var(--text);}
+.ph-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.3rem;}
+
+#toast{position:fixed;bottom:2rem;right:2rem;z-index:999;background:#162018;border:1px solid var(--green);
+  border-radius:9px;padding:.8rem 1.3rem;font-size:.85rem;font-weight:500;color:var(--text);
+  transform:translateY(20px);opacity:0;transition:all .28s;pointer-events:none;max-width:300px;}
+#toast.on{transform:translateY(0);opacity:1;}
+#toast.err{border-color:var(--red);background:#1a0c0c;}
 </style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- LANDING -->
+<div id="s-landing" class="screen active">
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="badge-pill">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg>
+        Plataforma de Talentos
+      </div>
+      <div class="hero-logo">PLAYER<span>LAB</span></div>
+      <p class="hero-sub">A plataforma que conecta jogadores de futebol a clubes e oportunidades. Mostre seu talento para o mundo.</p>
+      <div class="hero-btns">
+        <button class="btn-hero-primary" onclick="goAuth('register')">
+          Comece Agora
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-hero-secondary" onclick="goPublic()">Ver Peneiras</button>
+      </div>
+    </div>
+    <div class="scroll-hint"><div class="scroll-mouse"></div></div>
+  </section>
 
-<h1>PlayerLab</h1>
+  <div class="stats-wrap">
+    <div class="stats-inner">
+      <div class="stat-block"><div class="stat-number" id="stat-jogadores">0+</div><div class="stat-label">Jogadores Cadastrados</div></div>
+      <div class="stat-block"><div class="stat-number" id="stat-clubes">0+</div><div class="stat-label">Clubes Parceiros</div></div>
+      <div class="stat-block"><div class="stat-number" id="stat-peneiras">0+</div><div class="stat-label">Peneiras Realizadas</div></div>
+    </div>
+  </div>
 
-<input id="username" placeholder="Usuário">
+  <div class="como-section">
+    <div class="como-title">Como Funciona</div>
+    <div class="como-sub">Uma plataforma simples e poderosa para conectar talentos a oportunidades.</div>
+    <div class="como-cards">
+      <div class="como-card">
+        <div class="como-icon"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+        <div class="como-card-title">Jogadores</div>
+        <div class="como-card-desc">Crie seu perfil, mostre seus vídeos e estatísticas para clubes de todo o Brasil.</div>
+      </div>
+      <div class="como-card">
+        <div class="como-icon"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg></div>
+        <div class="como-card-title">Clubes</div>
+        <div class="como-card-desc">Encontre novos talentos filtrando por posição, idade e cidade.</div>
+      </div>
+      <div class="como-card">
+        <div class="como-icon"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H9v2h3v-2zm4 0h-3v2h3v-2zm-4 3H9v2h3v-2zm4 0h-3v2h3v-2z"/></svg></div>
+        <div class="como-card-title">Peneiras</div>
+        <div class="como-card-desc">Divulgue ou encontre peneiras e oportunidades de avaliação.</div>
+      </div>
+    </div>
+  </div>
 
-<input id="password" type="password" placeholder="Senha">
+  <div class="cta-section">
+    <div class="cta-card">
+      <div class="cta-icon-wrap"><svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg></div>
+      <div class="cta-title">Pronto para Começar?</div>
+      <div class="cta-desc">Crie sua conta gratuitamente e comece a explorar oportunidades agora mesmo.</div>
+      <button class="btn-cta" onclick="goAuth('register')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg>
+        Cadastre-se Grátis
+      </button>
+    </div>
+  </div>
 
-<button onclick="login()">Entrar</button>
-
-<button onclick="register()">Registrar</button>
-
-<div class="msg" id="msg"></div>
-
-<div class="history" id="history"></div>
-
+  <footer>
+    <div class="footer-logo">PLAYER<span>LAB</span></div>
+    <div class="footer-copy">© 2025 PlayerLab. Todos os direitos reservados.</div>
+  </footer>
 </div>
 
+<!-- AUTH -->
+<div id="s-auth" class="screen">
+  <div class="auth-box">
+    <div class="auth-logo">PLAYER<span>LAB</span></div>
+    <div class="auth-tagline">Conectando talentos e oportunidades</div>
+    <div class="tab-tog">
+      <button class="t-btn on" id="tb-login" onclick="switchTab('login')">Entrar</button>
+      <button class="t-btn" id="tb-reg" onclick="switchTab('register')">Cadastrar</button>
+    </div>
+    <div id="reg-type" style="display:none;">
+      <div class="type-tog">
+        <button class="ty-btn on" id="ty-jog" onclick="setType('jogador')"> Jogador</button>
+        <button class="ty-btn" id="ty-club" onclick="setType('clube')"> Clube</button>
+      </div>
+    </div>
+    <div id="reg-name" style="display:none;">
+      <div class="fg"><label class="fl">Nome / Nome do Clube</label>
+        <input type="text" class="fi noi" id="a-name" placeholder="Seu nome completo"></div>
+    </div>
+    <div class="fg"><label class="fl">Email</label>
+      <div class="fi-wrap">
+        <svg class="fi-icon" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        <input type="email" class="fi" id="a-email" placeholder="seu@email.com"></div></div>
+    <div class="fg"><label class="fl">Senha</label>
+      <div class="fi-wrap">
+        <svg class="fi-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 007 6v2H6a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V10a2 2 0 00-2-2zM9 6a3 3 0 016 0v2H9V6zm3 9a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>
+        <input type="password" class="fi" id="a-pass" placeholder="••••••••"></div></div>
+    <button class="btn-auth" id="a-sub" onclick="doAuth()">Entrar</button>
+    <div class="auth-err" id="a-err"></div>
+    <button class="auth-back" onclick="showS('landing')"> Voltar para o início</button>
+  </div>
+</div>
+
+<!-- PUBLIC -->
+<div id="s-pub" class="screen">
+  <nav>
+    <div class="nav-logo">PLAYER<span>LAB</span></div>
+    <div class="nav-r">
+      <button class="btn-nav btn-nav-ghost" onclick="showS('landing')"> Voltar</button>
+      <button class="btn-nav btn-nav-blue" onclick="goAuth('login')">Entrar</button>
+    </div>
+  </nav>
+  <div style="max-width:1100px;margin:0 auto;padding:2rem 1.5rem 3rem;">
+    <div class="pg-title" style="margin-bottom:.3rem;">Peneiras <span>Disponíveis</span></div>
+    <div class="pg-desc">Todas as peneiras publicadas por clubes cadastrados.</div>
+    <div id="pub-list"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="s-app" class="screen">
+  <nav>
+    <div class="nav-logo">PLAYER<span>LAB</span></div>
+    <div class="nav-r">
+      <span class="nav-user" id="nav-name"></span>
+      <button class="btn-nav btn-nav-ghost" onclick="logout()">Sair</button>
+    </div>
+  </nav>
+  <div class="app-wrap">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="content">
+
+      <div class="pg on" id="pg-dashboard">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <div class="pg-title">Dashboard</div>
+          <div class="pg-desc" id="d-welcome"></div>
+          <div class="stats-r" id="d-stats"></div>
+          <div id="d-body"></div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-peneiras">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <div class="ph-row">
+            <div><div class="pg-title">Minhas <span>Peneiras</span></div>
+              <div class="pg-desc" style="margin-bottom:0;">Gerencie as peneiras do seu clube.</div></div>
+            <button class="btn btn-blue btn-md" onclick="showPg('criar')">+ Nova Peneira</button>
+          </div>
+          <div style="margin-top:1.5rem;" id="c-list"></div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-criar">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <button class="back-btn" onclick="showPg('peneiras')"> Voltar</button>
+          <div class="pg-title">Nova <span>Peneira</span></div>
+          <div class="pg-desc">Preencha os dados — será publicada para todos os jogadores.</div>
+          <div class="form-card">
+            <div class="fgp"><label class="flp">Título</label>
+              <input type="text" class="fip" id="cp-t" placeholder="Ex: Peneira Sub-17 – Meia-Atacante"></div>
+            <div class="form-row">
+              <div class="fgp"><label class="flp">Data</label><input type="date" class="fip" id="cp-d"></div>
+              <div class="fgp"><label class="flp">Horário</label><input type="time" class="fip" id="cp-h"></div>
+            </div>
+            <div class="fgp"><label class="flp">Local</label>
+              <input type="text" class="fip" id="cp-l" placeholder="Nome do campo ou endereço"></div>
+            <div class="form-row">
+              <div class="fgp"><label class="flp">Posição</label>
+                <select class="fsp" id="cp-p">
+                  <option value="">Todas</option>
+                  <option>Goleiro</option><option>Lateral Direito</option><option>Lateral Esquerdo</option>
+                  <option>Zagueiro</option><option>Volante</option><option>Meia</option>
+                  <option>Ponta Direita</option><option>Ponta Esquerda</option><option>Atacante</option>
+                </select></div>
+              <div class="fgp"><label class="flp">Faixa Etária</label>
+                <input type="text" class="fip" id="cp-i" placeholder="Ex: 15–18 anos"></div>
+            </div>
+            <div class="fgp"><label class="flp">Descrição / Requisitos</label>
+              <textarea class="ftp" id="cp-desc" placeholder="Descreva o perfil buscado..."></textarea></div>
+            <button class="btn btn-blue btn-full" onclick="criarPeneira()">Publicar Peneira</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-detalhe">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <button class="back-btn" onclick="showPg('peneiras')"> Voltar</button>
+          <div id="det-content"></div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-jogadores">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <div class="pg-title">Perfis de <span>Jogadores</span></div>
+          <div class="pg-desc">Jogadores cadastrados na plataforma.</div>
+          <div id="jog-list"></div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-explorar">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <div class="pg-title">Peneiras <span>Disponíveis</span></div>
+          <div class="pg-desc">Encontre oportunidades para mostrar seu talento.</div>
+          <div id="exp-list"></div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-inscricoes">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <div class="pg-title">Minhas <span>Inscrições</span></div>
+          <div class="pg-desc">Peneiras em que você se inscreveu.</div>
+          <div id="ins-list"></div>
+        </div>
+      </div>
+
+      <div class="pg" id="pg-perfil">
+        <div class="field-bg"></div>
+        <div class="pg-inner">
+          <div class="pg-title">Meu <span>Perfil</span></div>
+          <div class="pg-desc">Suas informações são visíveis para os clubes.</div>
+          <div class="form-card">
+            <div class="form-row">
+              <div class="fgp"><label class="flp">Nome Completo</label>
+                <input type="text" class="fip" id="pf-n" placeholder="Seu nome"></div>
+              <div class="fgp"><label class="flp">Data de Nascimento</label>
+                <input type="date" class="fip" id="pf-nasc"></div>
+            </div>
+            <div class="form-row">
+              <div class="fgp"><label class="flp">Posição Principal</label>
+                <select class="fsp" id="pf-pos">
+                  <option value="">Selecione</option>
+                  <option>Goleiro</option><option>Lateral Direito</option><option>Lateral Esquerdo</option>
+                  <option>Zagueiro</option><option>Volante</option><option>Meia</option>
+                  <option>Ponta Direita</option><option>Ponta Esquerda</option><option>Atacante</option>
+                </select></div>
+              <div class="fgp"><label class="flp">Pé Dominante</label>
+                <select class="fsp" id="pf-pe">
+                  <option value="">Selecione</option>
+                  <option>Direito</option><option>Esquerdo</option><option>Ambidestro</option>
+                </select></div>
+            </div>
+            <div class="form-row">
+              <div class="fgp"><label class="flp">Altura (cm)</label>
+                <input type="number" class="fip" id="pf-alt" placeholder="175"></div>
+              <div class="fgp"><label class="flp">Cidade</label>
+                <input type="text" class="fip" id="pf-city" placeholder="Rio de Janeiro"></div>
+            </div>
+            <div class="fgp"><label class="flp">Sobre você</label>
+              <textarea class="ftp" id="pf-bio" placeholder="Conte sua história..."></textarea></div>
+            <button class="btn btn-blue btn-full" onclick="salvarPerfil()">Salvar Perfil</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div id="toast"></div>
+
 <script>
+// 
+//  BANCO LOCAL (localStorage)
+// 
+const DB = {
+  _g(k){ try{ return JSON.parse(localStorage.getItem('pl_'+k)||'null'); }catch{ return null; } },
+  _s(k,v){ localStorage.setItem('pl_'+k, JSON.stringify(v)); },
 
-const ADM_USER="mlkbg10"
-const ADM_PASS="B306090r@"
+  getUsers(){ return this._g('users') || {}; },
+  _saveUsers(u){ this._s('users',u); },
+  getUserByEmail(email){ return Object.values(this.getUsers()).find(u=>u.email===email)||null; },
+  getUserById(uid){ return this.getUsers()[uid]||null; },
+  createUser(data){ const u=this.getUsers(); u[data.uid]=data; this._saveUsers(u); },
+  updateUser(uid,data){ const u=this.getUsers(); u[uid]={...(u[uid]||{}),...data}; this._saveUsers(u); },
 
-function login(){
+  getPeneiras(){ return this._g('peneiras')||{}; },
+  _savePens(p){ this._s('peneiras',p); },
+  addPeneira(data){ const p=this.getPeneiras(); const id='p_'+Date.now(); p[id]={...data,id}; this._savePens(p); return id; },
+  getPeneirasByClub(clubId){ return Object.values(this.getPeneiras()).filter(p=>p.clubId===clubId); },
+  getPeneiraById(id){ return this.getPeneiras()[id]||null; },
 
-let user=document.getElementById("username").value
-let pass=document.getElementById("password").value
-let msg=document.getElementById("msg")
+  getInscricoes(){ return this._g('inscricoes')||{}; },
+  _saveIns(i){ this._s('inscricoes',i); },
+  addInscricao(data){ const i=this.getInscricoes(); const id='i_'+Date.now(); i[id]={...data,id}; this._saveIns(i); return id; },
+  getInscricoesByPeneira(pId){ return Object.values(this.getInscricoes()).filter(i=>i.peneiraId===pId); },
+  getInscricoesByPlayer(pId){ return Object.values(this.getInscricoes()).filter(i=>i.playerId===pId); },
+  jaInscrito(playerId,pId){ return Object.values(this.getInscricoes()).some(i=>i.playerId===playerId&&i.peneiraId===pId); },
+  updateInscricao(id,data){ const i=this.getInscricoes(); i[id]={...(i[id]||{}),...data}; this._saveIns(i); },
 
-// ADM
-if(user===ADM_USER && pass===ADM_PASS){
+  getSession(){ return this._g('session'); },
+  setSession(uid){ this._s('session',uid); },
+  clearSession(){ localStorage.removeItem('pl_session'); },
+};
 
-localStorage.setItem("admLogado","true")
+// 
+//  ESTADO
+// 
+let CU=null, aMode='login', uType='jogador';
 
-msg.innerText="Entrando no painel ADM..."
+// BOOT
+(function(){
+  loadLandingStats();
+  const uid=DB.getSession();
+  if(uid){ const u=DB.getUserById(uid); if(u){ CU=u; enterApp(); return; } }
+  showS('landing');
+})();
 
-setTimeout(()=>{
-window.location.href="painelADM_interface.html"
-},800)
-
-return
+function loadLandingStats(){
+  const users=Object.values(DB.getUsers());
+  document.getElementById('stat-jogadores').textContent=users.filter(u=>u.type==='jogador').length+'+';
+  document.getElementById('stat-clubes').textContent=users.filter(u=>u.type==='clube').length+'+';
+  document.getElementById('stat-peneiras').textContent=Object.keys(DB.getPeneiras()).length+'+';
 }
 
-// BANIDO
-if(localStorage.getItem("ban_"+user)){
-msg.innerText="Você foi banido da plataforma"
-return
+function enterApp(){
+  document.getElementById('nav-name').textContent=CU.name||CU.email;
+  showS('app'); buildSidebar(); showPg('dashboard');
 }
 
-let saved=localStorage.getItem("user_"+user)
+function showS(s){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById('s-'+s).classList.add('active');
+  if(s==='landing') window.scrollTo(0,0);
+}
+function goAuth(m){ aMode=m; switchTab(m); showS('auth'); }
+function goPublic(){ showS('pub'); loadPub(); }
 
-if(saved===pass){
+// AUTH
+function switchTab(m){
+  aMode=m; const r=m==='register';
+  document.getElementById('tb-login').classList.toggle('on',!r);
+  document.getElementById('tb-reg').classList.toggle('on',r);
+  document.getElementById('reg-type').style.display=r?'block':'none';
+  document.getElementById('reg-name').style.display=r?'block':'none';
+  document.getElementById('a-sub').textContent=r?'Criar Conta':'Entrar';
+  document.getElementById('a-err').textContent='';
+}
+function setType(t){
+  uType=t;
+  document.getElementById('ty-jog').classList.toggle('on',t==='jogador');
+  document.getElementById('ty-club').classList.toggle('on',t==='clube');
+  document.getElementById('a-name').placeholder=t==='clube'?'Nome do clube':'Seu nome completo';
+}
+function doAuth(){
+  const email=document.getElementById('a-email').value.trim().toLowerCase();
+  const pass=document.getElementById('a-pass').value;
+  const errEl=document.getElementById('a-err');
+  errEl.textContent='';
+  if(!email){errEl.textContent='Informe o email.';return;}
+  if(!pass||pass.length<6){errEl.textContent='Senha mínima 6 caracteres.';return;}
+  if(aMode==='register'){
+    const name=document.getElementById('a-name').value.trim();
+    if(!name){errEl.textContent='Informe seu nome.';return;}
+    if(DB.getUserByEmail(email)){errEl.textContent='Email já cadastrado.';return;}
+    const uid='u_'+Date.now();
+    DB.createUser({uid,name,email,password:pass,type:uType,createdAt:new Date().toISOString()});
+    CU=DB.getUserById(uid);
+  } else {
+    const u=DB.getUserByEmail(email);
+    if(!u){errEl.textContent='Usuário não encontrado.';return;}
+    if(u.password!==pass){errEl.textContent='Senha incorreta.';return;}
+    CU=u;
+  }
+  DB.setSession(CU.uid);
+  loadLandingStats();
+  enterApp();
+}
+function logout(){ DB.clearSession(); CU=null; showS('landing'); }
 
-localStorage.setItem("usuarioLogado",user)
-
-msg.innerText="Login realizado"
-
-setTimeout(()=>{
-
-window.location.href="playerlab.html"
-
-},800)
-
-}else{
-
-msg.innerText="Usuário ou senha incorretos"
-
+// SIDEBAR
+function buildSidebar(){
+  const club=CU.type==='clube';
+  const items=club
+    ?[['dashboard','Dashboard',IC.dash],['peneiras','Peneiras',IC.pen],['jogadores','Jogadores',IC.jog]]
+    :[['dashboard','Dashboard',IC.dash],['explorar','Peneiras',IC.pen],['inscricoes','Inscrições',IC.list],['perfil','Meu Perfil',IC.jog]];
+  document.getElementById('sidebar').innerHTML=
+    items.map(([id,lbl,ic])=>`<div class="sb-item" id="sb-${id}" onclick="showPg('${id}')">${ic} ${lbl}</div>`).join('')+
+    `<div class="sb-foot"><div class="sb-user-row"><div class="sb-av">${IC.jog}</div>
+    <div><div class="sb-uname">${CU.name||''}</div>
+    <div class="sb-urole">${CU.type==='clube'?'Clube':'Jogador'}</div></div></div></div>`;
 }
 
+// PAGES
+function showPg(name){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('on'));
+  const p=document.getElementById('pg-'+name); if(p)p.classList.add('on');
+  const s=document.getElementById('sb-'+name); if(s)s.classList.add('on');
+  if(name==='dashboard') loadDash();
+  if(name==='peneiras')  loadClubPens();
+  if(name==='jogadores') loadJogs();
+  if(name==='explorar')  loadExplorar();
+  if(name==='inscricoes') loadIns();
+  if(name==='perfil')    loadPerfil();
 }
 
-function register(){
-
-let user=document.getElementById("username").value
-let pass=document.getElementById("password").value
-
-if(!user || !pass){
-
-msg("Preencha usuário e senha")
-return
-
+// DASHBOARD
+function loadDash(){
+  if(!CU)return;
+  const club=CU.type==='clube';
+  document.getElementById('d-welcome').textContent=`Bem-vindo de volta, ${CU.name}!`;
+  if(club){
+    const total=DB.getPeneirasByClub(CU.uid).length;
+    document.getElementById('d-stats').innerHTML=`<div class="sc"><div class="sv"><b>${total}</b></div><div class="sl">Peneiras Publicadas</div></div>`;
+    document.getElementById('d-body').innerHTML=`<div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+      <button class="btn btn-blue btn-md" onclick="showPg('peneiras')">Ver Peneiras </button>
+      <button class="btn btn-ghost btn-md" onclick="showPg('jogadores')">Ver Jogadores</button></div>`;
+  } else {
+    const total=DB.getInscricoesByPlayer(CU.uid).length;
+    document.getElementById('d-stats').innerHTML=`<div class="sc"><div class="sv"><b>${total}</b></div><div class="sl">Inscrições Realizadas</div></div>`;
+    document.getElementById('d-body').innerHTML=`<div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+      <button class="btn btn-blue btn-md" onclick="showPg('explorar')">Explorar Peneiras </button>
+      <button class="btn btn-ghost btn-md" onclick="showPg('perfil')">Completar Perfil</button></div>`;
+  }
 }
 
-if(localStorage.getItem("user_"+user)){
-
-msg("Usuário já existe")
-return
-
+// PUBLIC
+function loadPub(){
+  const el=document.getElementById('pub-list');
+  const pens=Object.values(DB.getPeneiras());
+  if(!pens.length){el.innerHTML=emptyEl('cal','Nenhuma disponível','Volte em breve para novas oportunidades.');return;}
+  el.innerHTML=`<div class="grid">${pens.map(p=>cardPen(p,'pub')).join('')}</div>`;
 }
 
-localStorage.setItem("user_"+user,pass)
-
-msg("Conta criada com sucesso")
-
-atualizarHistorico()
-
+// CLUBE: PENEIRAS
+function loadClubPens(){
+  const el=document.getElementById('c-list');
+  const items=DB.getPeneirasByClub(CU.uid);
+  if(!items.length){el.innerHTML=emptyEl('pen','Nenhuma peneira','Clique em "+ Nova Peneira" para criar.');return;}
+  el.innerHTML=`<div class="grid">${items.map(p=>cardPen(p,'owner')).join('')}</div>`;
+}
+function criarPeneira(){
+  const title=document.getElementById('cp-t').value.trim();
+  if(!title){toast('Informe o título.',1);return;}
+  DB.addPeneira({title,date:document.getElementById('cp-d').value,time:document.getElementById('cp-h').value,
+    location:document.getElementById('cp-l').value.trim(),position:document.getElementById('cp-p').value,
+    ageRange:document.getElementById('cp-i').value.trim(),desc:document.getElementById('cp-desc').value.trim(),
+    clubId:CU.uid,clubName:CU.name,createdAt:new Date().toISOString()});
+  ['cp-t','cp-d','cp-h','cp-l','cp-i','cp-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cp-p').value='';
+  loadLandingStats();
+  toast('Peneira publicada!');
+  showPg('peneiras');
 }
 
-function msg(t){
-
-document.getElementById("msg").innerText=t
-
+// CLUBE: DETALHE
+function verDetalhe(pId){
+  showPg('detalhe');
+  const el=document.getElementById('det-content');
+  const p=DB.getPeneiraById(pId);
+  if(!p){el.innerHTML='<p style="color:var(--muted)">Peneira não encontrada.</p>';return;}
+  const ins=DB.getInscricoesByPeneira(pId);
+  el.innerHTML=`
+    <div class="dh">
+      <div class="dh-club">${p.clubName}</div>
+      <div class="dh-title">${p.title}</div>
+      <div class="ctags" style="margin-top:.6rem;">
+        ${p.location?`<span class="ctag"> ${p.location}</span>`:''}
+        ${p.date?`<span class="ctag"> ${fd(p.date)}</span>`:''}
+        ${p.time?`<span class="ctag"> ${p.time}</span>`:''}
+        ${p.position?`<span class="ctag"> ${p.position}</span>`:''}
+        ${p.ageRange?`<span class="ctag"> ${p.ageRange}</span>`:''}
+      </div>
+      ${p.desc?`<div style="margin-top:.7rem;font-size:.82rem;color:var(--muted);line-height:1.6;">${p.desc}</div>`:''}
+    </div>
+    <div class="pg-title" style="font-size:1.5rem;margin-bottom:1rem;">Inscrições <span>(${ins.length})</span></div>
+    ${ins.length===0?emptyEl('cal','Nenhuma inscrição','Os jogadores inscritos aparecerão aqui.')
+    :`<div class="ins-list">${ins.map(i=>`
+      <div class="ins-row">
+        <div>
+          <div style="font-weight:600;">${i.playerName||'Jogador'}</div>
+          <div style="font-size:.75rem;color:var(--muted);">${i.playerEmail||''}${i.playerPosition?' · '+i.playerPosition:''}</div>
+          <div style="font-size:.7rem;color:var(--muted);">${fiso(i.createdAt)}</div>
+        </div>
+        <div class="ins-acts">
+          <span class="ins-st ${i.status||'pending'}">${stLbl(i.status)}</span>
+          ${i.status!=='approved'?`<button class="btn btn-green btn-xs" onclick="updSt('${i.id}','approved','${pId}')"></button>`:''}
+          ${i.status!=='rejected'?`<button class="btn btn-danger btn-xs" onclick="updSt('${i.id}','rejected','${pId}')"></button>`:''}
+        </div>
+      </div>`).join('')}</div>`}`;
+}
+function updSt(iId,status,pId){
+  DB.updateInscricao(iId,{status});
+  toast(status==='approved'?'Jogador aprovado!':'Jogador reprovado.');
+  verDetalhe(pId);
 }
 
-function atualizarHistorico(){
-
-let div=document.getElementById("history")
-
-div.innerHTML="<h3>Usuários:</h3>"
-
-for(let i=0;i<localStorage.length;i++){
-
-let key=localStorage.key(i)
-
-if(key.startsWith("user_")){
-
-let user=key.replace("user_","")
-
-let el=document.createElement("div")
-
-el.className="user"
-
-el.innerHTML=`
-<span>${user}</span>
-<button onclick="excluirConta('${user}')">Excluir</button>
-`
-
-div.appendChild(el)
-
+// JOGADOR: EXPLORAR
+function loadExplorar(){
+  const el=document.getElementById('exp-list');
+  const pens=Object.values(DB.getPeneiras());
+  if(!pens.length){el.innerHTML=emptyEl('cal','Nenhuma disponível','Volte em breve para novas oportunidades.');return;}
+  el.innerHTML=`<div class="grid">${pens.map(p=>cardPen(p,'player')).join('')}</div>`;
+}
+function inscrever(pId,titulo){
+  if(!CU){goAuth('login');return;}
+  if(DB.jaInscrito(CU.uid,pId)){toast('Você já está inscrito nesta peneira.',1);return;}
+  DB.addInscricao({playerId:CU.uid,playerName:CU.name||'',playerEmail:CU.email,
+    playerPosition:CU.position||'',peneiraId:pId,peneiraTitle:titulo,
+    status:'pending',createdAt:new Date().toISOString()});
+  toast('Inscrição realizada!');
+  loadExplorar();
 }
 
+// JOGADOR: INSCRIÇÕES
+function loadIns(){
+  const el=document.getElementById('ins-list');
+  const items=DB.getInscricoesByPlayer(CU.uid);
+  if(!items.length){el.innerHTML=emptyEl('list','Nenhuma inscrição','Você ainda não se inscreveu em nenhuma peneira.');return;}
+  el.innerHTML=`<div class="ins-list">${items.map(i=>`
+    <div class="ins-row">
+      <div><div style="font-weight:600;">${i.peneiraTitle||'Peneira'}</div>
+        <div style="font-size:.75rem;color:var(--muted);">${fiso(i.createdAt)}</div></div>
+      <span class="ins-st ${i.status||'pending'}">${stLbl(i.status)}</span>
+    </div>`).join('')}</div>`;
 }
 
+// JOGADOR: PERFIL
+function loadPerfil(){
+  const u=DB.getUserById(CU.uid)||{};
+  document.getElementById('pf-n').value=u.name||'';
+  document.getElementById('pf-nasc').value=u.birth||'';
+  document.getElementById('pf-pos').value=u.position||'';
+  document.getElementById('pf-pe').value=u.foot||'';
+  document.getElementById('pf-alt').value=u.height||'';
+  document.getElementById('pf-city').value=u.city||'';
+  document.getElementById('pf-bio').value=u.bio||'';
+}
+function salvarPerfil(){
+  const data={name:document.getElementById('pf-n').value.trim(),birth:document.getElementById('pf-nasc').value,
+    position:document.getElementById('pf-pos').value,foot:document.getElementById('pf-pe').value,
+    height:document.getElementById('pf-alt').value,city:document.getElementById('pf-city').value.trim(),
+    bio:document.getElementById('pf-bio').value.trim()};
+  DB.updateUser(CU.uid,data);
+  CU={...CU,...data};
+  document.getElementById('nav-name').textContent=data.name||CU.email;
+  toast('Perfil salvo!');
 }
 
-function excluirConta(user){
-
-if(!confirm("Excluir a conta "+user+" permanentemente?")) return
-
-localStorage.removeItem("user_"+user)
-localStorage.removeItem("clube_"+user)
-localStorage.removeItem("player_"+user)
-localStorage.removeItem("perfil_"+user)
-localStorage.removeItem("ban_"+user)
-localStorage.removeItem("favoritos_"+user)
-localStorage.removeItem("talentos_"+user)
-
-alert("Conta excluída permanentemente")
-
-atualizarHistorico()
-
+// CLUBE: JOGADORES
+function loadJogs(){
+  const el=document.getElementById('jog-list');
+  const jogs=Object.values(DB.getUsers()).filter(u=>u.type==='jogador');
+  if(!jogs.length){el.innerHTML=emptyEl('jog','Nenhum jogador','Nenhum jogador cadastrado ainda.');return;}
+  el.innerHTML=`<div class="grid">${jogs.map(j=>`
+    <div class="card">
+      <div class="ch"><div class="cav">${IC.jog}</div>${j.position?`<span class="cbadge blue">${j.position}</span>`:''}</div>
+      <div class="cn">${j.name||'Jogador'}</div>
+      <div class="cm">${[j.city,j.foot?'Pé '+j.foot:'',j.height?j.height+'cm':''].filter(Boolean).join(' · ')}</div>
+      ${j.bio?`<div class="cm" style="margin-top:.35rem;font-size:.74rem;">${j.bio.slice(0,90)}${j.bio.length>90?'…':''}</div>`:''}
+      <div class="ctags">
+        ${j.position?`<span class="ctag"> ${j.position}</span>`:''}
+        ${j.city?`<span class="ctag"> ${j.city}</span>`:''}
+      </div>
+      <div class="cf"><a class="btn btn-ghost btn-sm" href="mailto:${j.email}"> Contatar</a></div>
+    </div>`).join('')}</div>`;
 }
 
-atualizarHistorico()
+// CARD PENEIRA
+function cardPen(p,mode){
+  let btn='';
+  if(mode==='owner') btn=`<button class="btn btn-ghost btn-sm" onclick="verDetalhe('${p.id}')">Ver Inscrições</button>`;
+  if(mode==='player'){
+    const inscrito=DB.jaInscrito(CU.uid,p.id);
+    btn=inscrito?`<span class="cbadge green" style="padding:5px 10px;"> Inscrito</span>`
+      :`<button class="btn btn-blue btn-sm" onclick="inscrever('${p.id}','${(p.title||'').replace(/'/g,"\\'")}')">Inscrever-se</button>`;
+  }
+  if(mode==='pub') btn=`<button class="btn btn-blue btn-sm" onclick="goAuth('login')">Entrar para Inscrever</button>`;
+  return `<div class="card">
+    <div class="ch"><div class="cav"><svg viewBox="0 0 24 24" fill="var(--blue-l)"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg></div>
+      <span class="cbadge green">Aberta</span></div>
+    <div class="cn">${p.title||'Sem título'}</div>
+    <div class="cm">${p.clubName||''}</div>
+    <div class="ctags">
+      ${p.location?`<span class="ctag"> ${p.location}</span>`:''}
+      ${p.date?`<span class="ctag"> ${fd(p.date)}</span>`:''}
+      ${p.position?`<span class="ctag"> ${p.position}</span>`:''}
+      ${p.ageRange?`<span class="ctag"> ${p.ageRange}</span>`:''}
+    </div>
+    <div class="cf">${btn}</div>
+  </div>`;
+}
 
+// UTILS
+function emptyEl(icon,title,sub){
+  const icons={
+    cal:`<svg class="eico" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11zm-7-9H9v2h3v-2zm4 0h-3v2h3v-2zm-4 3H9v2h3v-2zm4 0h-3v2h3v-2z"/></svg>`,
+    pen:`<svg class="eico" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
+    list:`<svg class="eico" viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>`,
+    jog:`<svg class="eico" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`,
+  };
+  return `<div class="empty">${icons[icon]||icons.cal}<div class="etit">${title}</div><div class="esub">${sub}</div></div>`;
+}
+function fd(d){if(!d)return'';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
+function fiso(s){if(!s)return'';try{return new Date(s).toLocaleDateString('pt-BR');}catch{return'';}}
+function stLbl(s){return{pending:'Pendente',approved:'Aprovado',rejected:'Reprovado'}[s]||'Pendente';}
+function toast(msg,err=0){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='on'+(err?' err':'');
+  setTimeout(()=>t.className='',3200);
+}
+
+const IC={
+  dash:`<svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>`,
+  pen:`<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm0 16H5V8h14v11z"/></svg>`,
+  jog:`<svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`,
+  list:`<svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>`,
+};
 </script>
-
 </body>
 </html>
